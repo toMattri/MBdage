@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <color name="colorPrimary">#EC533C</color>
+    <color name="colorPrimaryLight">#ff8568</color>
+    <color name="colorPrimaryDark">#b31a13</color>
+
+    <color name="colorSecondary">#3ced4f</color>
+    <color name="colorSecondaryLight">#7fff81</color>
+    <color name="colorSecondaryDark">#00b915</color>
+
+
+    <color name="red">#F10B0B</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="nfc">#2196f3</color>
+    <color name="qrCode">#F32140</color>
+
+
+    <color name="blueSky">#309BDF</color>
+    <color name="redAlert">#ED1D1D</color>
+    <color name="yellowWarnig">#EDD11D</color>
+    <color name="greenSucces">#43A81F</color>
+
+</resources>

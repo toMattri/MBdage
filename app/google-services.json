@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "107885498519",
+    "firebase_url": "https://mbadge-8289a-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "mbadge-8289a",
+    "storage_bucket": "mbadge-8289a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:107885498519:android:93461433ea84edef9999d2",
+        "android_client_info": {
+          "package_name": "it.motta.mbdage"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "107885498519-6kn09tdsiaouegap6okf8p88jbv39j77.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDN0FGXwDDuOlnpT6LuExFxlfd2GoKozC8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "107885498519-6kn09tdsiaouegap6okf8p88jbv39j77.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
