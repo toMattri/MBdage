@@ -1,8 +1,8 @@
 package it.motta.mbdage.database;
 
-import android.provider.BaseColumns;
+import it.motta.mbdage.interfaces.TableInterface;
 
-public interface VarchiTable extends BaseColumns {
+public interface VarchiTable extends TableInterface {
 
     String TABLE_NAME = "tb_varchi";
 
@@ -19,4 +19,8 @@ public interface VarchiTable extends BaseColumns {
             CL_IMAGE
     };
 
+    @Override
+    default String createTable() {
+        return null;
+    }
 }

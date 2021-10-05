@@ -91,6 +91,8 @@ public class DBHandler extends SQLiteOpenHelper {
                     VarchiTable.CL_LATITUDINE,
                     VarchiTable.CL_LONGITUDINE));
 
+            db.execSQL(TokenTable.createTable());
+
         }catch (Exception ex){
             ex.printStackTrace();
         }

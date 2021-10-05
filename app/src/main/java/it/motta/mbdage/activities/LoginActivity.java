@@ -22,12 +22,10 @@ import java.util.Date;
 import java.util.Objects;
 
 import it.motta.mbdage.R;
-import it.motta.mbdage.dialog.ConfirmDialog;
 import it.motta.mbdage.dialog.DateTimePickerDialog;
 import it.motta.mbdage.utils.MakeHttpRequest;
 import it.motta.mbdage.utils.Parameters;
 import it.motta.mbdage.utils.Utils;
-
 
 @SuppressLint({"ResourceType","ClickableViewAccessibility","NonConstantResourceId"})
 public class LoginActivity extends AppCompatActivity {
