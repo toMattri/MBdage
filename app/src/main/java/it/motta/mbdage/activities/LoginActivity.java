@@ -123,7 +123,7 @@ public class LoginActivity extends AppCompatActivity {
                     break;
                 case R.id.btAccedi:
 
-                    MakeHttpRequest.sendPost();
+                    //MakeHttpRequest.sendPost();
 
                     boolean blAccedi = true;
                     if (edtEmailAccedi.getText().toString().length() == 0 || Utils.valideEmail(edtEmailAccedi.getText().toString())) {

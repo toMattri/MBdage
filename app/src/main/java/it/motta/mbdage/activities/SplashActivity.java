@@ -14,6 +14,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import java.util.Objects;
 
 import it.motta.mbdage.R;
+import it.motta.mbdage.database.DBHandler;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -23,7 +24,7 @@ public class SplashActivity extends AppCompatActivity {
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         Objects.requireNonNull(getSupportActionBar()).hide();
         setContentView(R.layout.activity_splash);
-
+        DBHandler dbHandler = new DBHandler(this);
         FirebaseApp.initializeApp(this);
         FirebaseMessaging.getInstance().setAutoInitEnabled(true);
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
@@ -33,7 +34,7 @@ public class SplashActivity extends AppCompatActivity {
             }
             // Get new FCM registration token
             String token = task.getResult();
-
+            dbHandler.updateToken(token);
             // Log and toast
             //Toast.makeText(MainActivity.this, token, Toast.LENGTH_LONG).show();
         });

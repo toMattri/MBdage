@@ -1,5 +1,6 @@
 package it.motta.mbdage.database;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -22,80 +23,29 @@ public class DBHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         try {
 
-            String sql = "CREATE TABLE {0} " +
-                    "({1} INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "{2} TEXT NOT NULL, " +
-                    "{3} TEXT NOT NULL);";
+            db.execSQL(DispositiviTable.TABLE);
 
-            db.execSQL(MessageFormat.format(sql, DispositiviTable.TABLE_NAME,
-                    DispositiviTable._ID,
-                    DispositiviTable.CL_DESCRIZIONE,
-                    DispositiviTable.CL_TOKEN));
+            db.execSQL(LogTable.TABLE);
 
+            db.execSQL(PassagiTable.TABLE);
 
-            sql = "CREATE TABLE {0} " +
-                    "({1} INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "{2} INTEGER NOT NULL, " +
-                    "{3} TEXT NOT NULL," +
-                    "{4} TEXT NOT NULL," +
-                    "{5} DATETIME NOT NULL DEFAULT TIMESTAMP);";
+            db.execSQL(UtenteTable.TABLE);
 
-            db.execSQL(MessageFormat.format(sql, LogTable.TABLE_NAME,
-                    LogTable._ID,
-                    LogTable.CL_ID_UTENTE,
-                    LogTable.CL_OPERAZIONE,
-                    LogTable.CL_TOKEN_DISPOSITIVO,
-                    LogTable.CL_TIME_STAMP));
+            db.execSQL(VarchiTable.TABLE);
 
-            sql = "CREATE TABLE {0} " +
-                    "({1} INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "{2} INTEGER NOT NULL, " +
-                    "{3} TEXT NOT NULL," +
-                    "{4} TEXT NOT NULL," +
-                    "{5} DATETIME NOT NULL DEFAULT TIMESTAMP,"+
-                    "{6} DATETIME NOT NULL DEFAULT TIMESTAMP);";
-
-            db.execSQL(MessageFormat.format(sql, PassagiTable.TABLE_NAME,
-                    PassagiTable._ID,
-                    PassagiTable.CL_ID_UTENTE,
-                    PassagiTable.CL_ID_VARCO,
-                    PassagiTable.CL_TOKEN_DISPOSITIVO,
-                    PassagiTable.CL_DATA,
-                    PassagiTable.CL_DATA_SYN));
-
-            sql = "CREATE TABLE {0} " +
-                    "({1} INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "{2} TEXT NOT NULL, " +
-                    "{3} TEXT NOT NULL," +
-                    "{4} TEXT NOT NULL," +
-                    "{5} TEXT NOT NULL);";
-
-            db.execSQL(MessageFormat.format(sql, UtenteTable.TABLE_NAME,
-                    UtenteTable._ID,
-                    UtenteTable.CL_NOME,
-                    UtenteTable.CL_COGNOME,
-                    UtenteTable.CL_NASCITA,
-                    UtenteTable.CL_TIPO));
-
-            sql = "CREATE TABLE {0} " +
-                    "({1} INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "{2} TEXT NOT NULL, " +
-                    "{3} TEXT NOT NULL," +
-                    "{4} TEXT NOT NULL," +
-                    "{5} TEXT NOT NULL );";
-
-            db.execSQL(MessageFormat.format(sql, VarchiTable.TABLE_NAME,
-                    VarchiTable._ID,
-                    VarchiTable.CL_DESCRIZIONE,
-                    VarchiTable.CL_IMAGE,
-                    VarchiTable.CL_LATITUDINE,
-                    VarchiTable.CL_LONGITUDINE));
-
-            db.execSQL(TokenTable.createTable());
+            db.execSQL(TokenTable.TABLE);
 
         }catch (Exception ex){
             ex.printStackTrace();
         }
+    }
+
+
+    public void updateToken(String token){
+        getWritableDatabase().delete(TokenTable.TABLE_NAME,TokenTable._ID + " > 0",null);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(TokenTable.CL_LAST_TOKEN,token);
+        getWritableDatabase().insertOrThrow(TokenTable.TABLE_NAME,null,contentValues);
     }
 
 

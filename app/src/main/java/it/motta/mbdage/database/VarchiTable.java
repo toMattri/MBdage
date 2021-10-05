@@ -1,8 +1,10 @@
 package it.motta.mbdage.database;
 
-import it.motta.mbdage.interfaces.TableInterface;
+import android.provider.BaseColumns;
 
-public interface VarchiTable extends TableInterface {
+import java.text.MessageFormat;
+
+public interface VarchiTable extends BaseColumns {
 
     String TABLE_NAME = "tb_varchi";
 
@@ -19,8 +21,16 @@ public interface VarchiTable extends TableInterface {
             CL_IMAGE
     };
 
-    @Override
-    default String createTable() {
-        return null;
-    }
+    String TABLE = MessageFormat.format("CREATE TABLE {0} " +
+                    "({1} INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "{2} TEXT NOT NULL, " +
+                    "{3} TEXT NOT NULL," +
+                    "{4} TEXT NOT NULL," +
+                    "{5} TEXT NOT NULL);",
+            TABLE_NAME,
+            _ID,
+            CL_DESCRIZIONE,
+            CL_IMAGE,
+            CL_LATITUDINE,
+            CL_LONGITUDINE);
 }

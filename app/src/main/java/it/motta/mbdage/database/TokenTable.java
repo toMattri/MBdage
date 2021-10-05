@@ -16,14 +16,11 @@ interface TokenTable extends BaseColumns {
             CL_TIME_STAMP
     };
 
-    static String createTable(){
-        return MessageFormat.format("CREATE TABLE {0} " +
-                        "({1} INTEGER PRIMARY KEY AUTOINCREMENT," +
-                        "{2} TEXT NOT NULL, " +
-                        "{3} DATETIME NOT NULL DEFAULT TIMESTAMP);",
-                TokenTable.TABLE_NAME, TokenTable._ID,
-                TokenTable.CL_LAST_TOKEN, TokenTable.CL_TIME_STAMP);
-    }
-
+    String TABLE = MessageFormat.format("CREATE TABLE {0} " +
+                    "({1} INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "{2} TEXT NOT NULL, " +
+                    "{3} DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP);",
+            TokenTable.TABLE_NAME, TokenTable._ID,
+            TokenTable.CL_LAST_TOKEN, TokenTable.CL_TIME_STAMP);
 
 }
