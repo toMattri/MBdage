@@ -22,24 +22,16 @@ public class DBHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         try {
-
             db.execSQL(DispositiviTable.TABLE);
-
             db.execSQL(LogTable.TABLE);
-
             db.execSQL(PassagiTable.TABLE);
-
             db.execSQL(UtenteTable.TABLE);
-
             db.execSQL(VarchiTable.TABLE);
-
             db.execSQL(TokenTable.TABLE);
-
         }catch (Exception ex){
             ex.printStackTrace();
         }
     }
-
 
     public void updateToken(String token){
         getWritableDatabase().delete(TokenTable.TABLE_NAME,TokenTable._ID + " > 0",null);
@@ -48,13 +40,10 @@ public class DBHandler extends SQLiteOpenHelper {
         getWritableDatabase().insertOrThrow(TokenTable.TABLE_NAME,null,contentValues);
     }
 
-
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
         if(oldVersion < newVersion){
 
         }
-
     }
 }

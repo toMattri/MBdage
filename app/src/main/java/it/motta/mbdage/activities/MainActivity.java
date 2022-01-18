@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         cardProfilo = findViewById(R.id.cardProfilo);
         cardProfilo.addView(setContentProfilo());
+
     }
 
     private View setContentProfilo(){
