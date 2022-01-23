@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="defaultButton" parent="Widget.MaterialComponents.Button">
+    <style name="defaultButton" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/selector_first_button</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:paddingStart">4dp</item>
-        <item name="android:paddingEnd">4dp</item>
+        <item name="android:paddingStart">6dp</item>
+        <item name="android:paddingEnd">6dp</item>
     </style>
 
     <style name="defaultText" parent="Widget.MaterialComponents.TextView">
         <item name="android:textColor">@color/black</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+    <style name="defaultTextNight" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textColor">@color/white</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textSize">18sp</item>
     </style>

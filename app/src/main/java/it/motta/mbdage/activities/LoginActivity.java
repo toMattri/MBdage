@@ -4,12 +4,14 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +34,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.OAuthProvider;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -40,6 +43,8 @@ import java.util.Objects;
 
 import it.motta.mbdage.R;
 import it.motta.mbdage.dialog.DateTimePickerDialog;
+import it.motta.mbdage.models.Utente;
+import it.motta.mbdage.models.evalue.TypeUtente;
 import it.motta.mbdage.utils.Parameters;
 import it.motta.mbdage.utils.Utils;
 
@@ -47,15 +52,16 @@ import it.motta.mbdage.utils.Utils;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int RC_SIGN_IN = 9001;
-    private SignInButton  signInButton;
-    private TextInputEditText edtEmailAccedi, edtPasswordAccedi,
-            edtNomeRegistrati, edtCognomeRegistrati, edtEmailRegistrati, edtPasswordRegistrati, edtDataRegistrati;
+    private SignInButton  signInButton,signInButtonGit;
+    private TextInputEditText edtEmailAccedi,edtPasswordAccedi,edtNomeRegistrati,edtCognomeRegistrati,edtEmailRegistrati,edtPasswordRegistrati,edtDataRegistrati;
     private FirebaseAuth mAuth;
+    private OAuthProvider.Builder provider;
     private GoogleSignInClient mGoogleSignInClient;
     private Animation centerToRight,leftToCenter;
     private Button btAccedi, btRegistrati;
-    private TextView txtRegistrati, txtDesc;
+    private TextView txtRegistrati,txtAccedi;
     private CardView cardLogin, cardRegistrati;
+    private LinearLayout llSignWIthOther;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,34 +70,35 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Objects.requireNonNull(getSupportActionBar()).hide();
         setContentView(R.layout.activity_login);
         mAuth = FirebaseAuth.getInstance();
-
+        provider = OAuthProvider.newBuilder("github.com");
         txtRegistrati = findViewById(R.id.txtRegistrati);
-        txtDesc = findViewById(R.id.txtDesc);
-
+        txtAccedi = findViewById(R.id.txtAccedi);
+        llSignWIthOther = findViewById(R.id.llSignWIthOther);
+        signInButtonGit = findViewById(R.id.signInGit);
         cardLogin = findViewById(R.id.cardLogin);
         cardRegistrati = findViewById(R.id.cardRegister);
-
         edtEmailAccedi = findViewById(R.id.edtEmailAccedi);
         edtPasswordAccedi = findViewById(R.id.edtPasswordAccedi);
-
         edtNomeRegistrati = findViewById(R.id.edtNomeRegistrati);
         edtCognomeRegistrati = findViewById(R.id.edtCognomeRegistrati);
         edtEmailRegistrati = findViewById(R.id.edtEmailRegistrati);
         edtPasswordRegistrati = findViewById(R.id.edtPasswordRegistrati);
         edtDataRegistrati = findViewById(R.id.edtDataRegistrati);
         signInButton = findViewById(R.id.signInGoogle);
-
         btRegistrati = findViewById(R.id.btRegistrati);
         btAccedi = findViewById(R.id.btAccedi);
 
+
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-        txtRegistrati.setTag(true);
         centerToRight = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.pushright);
         leftToCenter = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fromleft);
 
         txtRegistrati.setOnClickListener(this);
+        txtAccedi.setOnClickListener(this);
         btRegistrati.setOnClickListener(this);
+        signInButtonGit.setOnClickListener(this);
         btAccedi.setOnClickListener(this);
         signInButton.setOnClickListener(this);
 
@@ -125,7 +132,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @SuppressLint("SimpleDateFormat")
     private void saveDataRegistrazione(TextInputEditText edt) {
         try {
-
             Date date = Objects.requireNonNull(edt.getText()).toString().length() == 0 ? Utils.getFirstDayOfYear(20) : new SimpleDateFormat("dd/MM/yyyy").parse(edt.getText().toString());
             DateTimePickerDialog dateTimePickerDialog = new DateTimePickerDialog(this, "Data di nascita", date);
             dateTimePickerDialog.setOnDismissListener(dialog -> {
@@ -157,25 +163,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         edtCognomeRegistrati.setText("");
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
-            // reload();
-        }
-    }
     private void signInGoogle() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+    private void signInGitHub(){
+        mAuth.startActivityForSignInWithProvider(this, provider.build())
+                .addOnSuccessListener(authResult -> {
+                    Log.e("RES" , authResult.getUser().getEmail());
+                    // authResult.getCredential().getProvider().get
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                });
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
@@ -210,24 +215,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.txtAccedi:
+                llSignWIthOther.setVisibility(View.VISIBLE);
+                cardLogin.setVisibility(View.VISIBLE);
+                cardRegistrati.setVisibility(View.GONE);
+                cardLogin.startAnimation(leftToCenter);
+                cardRegistrati.startAnimation(centerToRight);
+                disableAllerror();
+                break;
             case R.id.txtRegistrati:
-                if ((boolean) view.getTag()) {
-                    cardLogin.setVisibility(View.GONE);
-                    cardRegistrati.setVisibility(View.VISIBLE);
-                    cardLogin.startAnimation(centerToRight);
-                    cardRegistrati.startAnimation(leftToCenter);
-                    txtRegistrati.setTag(false);
-                    txtRegistrati.setText("Accedi");
-                    txtDesc.setText("Hai già un account ?");
-                } else {
-                    txtRegistrati.setTag(true);
-                    txtDesc.setText("Non hai ancora un account ?");
-                    txtRegistrati.setText("Registrati");
-                    cardLogin.setVisibility(View.VISIBLE);
-                    cardRegistrati.setVisibility(View.GONE);
-                    cardLogin.startAnimation(leftToCenter);
-                    cardRegistrati.startAnimation(centerToRight);
-                }
+                cardLogin.setVisibility(View.GONE);
+                cardRegistrati.setVisibility(View.VISIBLE);
+                cardLogin.startAnimation(centerToRight);
+                cardRegistrati.startAnimation(leftToCenter);
+                txtRegistrati.setTag(false);
+                llSignWIthOther.setVisibility(View.GONE);
                 disableAllerror();
                 break;
             case R.id.btRegistrati:
@@ -269,8 +271,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w("TAG", "createUserWithEmail:failure", task.getException());
-                                Toast.makeText(this, "Authentication failed.",
-                                        Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                                 //updateUI(null);
                             }
                         });
@@ -292,27 +293,42 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (!blAccedi) return;
 
                 mAuth.signInWithEmailAndPassword(edtEmailAccedi.getText().toString(), edtPasswordAccedi.getText().toString())
-                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // Sign in success, update UI with the signed-in user's information
-                                    Log.d("TAG", "signInWithEmail:success");
-                                    FirebaseUser user = mAuth.getCurrentUser();
-                                    // updateUI(user);
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                    Log.w("TAG", "signInWithEmail:failure", task.getException());
-                                    Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                            Toast.LENGTH_SHORT).show();
-                                    // updateUI(null);
-                                }
+                        .addOnCompleteListener(this, task -> {
+                            if (task.isSuccessful()) {
+                                // Sign in success, update UI with the signed-in user's information
+                                Log.d("TAG", "signInWithEmail:success");
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                // updateUI(user);
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Log.w("TAG", "signInWithEmail:failure", task.getException());
+                                Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                        Toast.LENGTH_SHORT).show();
+                                // updateUI(null);
                             }
                         });
                 break;
             case R.id.signInGoogle:
                 signInGoogle();
+                break;
+            case R.id.signInGit:
+                signInGitHub();
+                break;
         }
+
+    }
+
+    private Utente createUser(FirebaseUser firebaseUser){
+        return new Utente(firebaseUser.getDisplayName(),firebaseUser.getEmail(),"",TypeUtente.NOCOMPLETED,firebaseUser.getUid());
+    }
+
+    private Utente createUser(FirebaseUser firebaseUser,String pass,String Data){
+        return new Utente(firebaseUser.getDisplayName(),firebaseUser.getEmail(),pass,Data, TypeUtente.NOCOMPLETED,firebaseUser.getUid());
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return super.onKeyDown(keyCode, event);
 
     }
 }
