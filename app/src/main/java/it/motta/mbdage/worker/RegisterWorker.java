@@ -10,12 +10,13 @@ import org.json.JSONObject;
 
 import it.motta.mbdage.dialog.ProgressCDialog;
 import it.motta.mbdage.interfaces.IAccessOperation;
+import it.motta.mbdage.message.ResultAccess;
 import it.motta.mbdage.models.Utente;
 import it.motta.mbdage.utils.MakeHttpRequest;
 import it.motta.mbdage.utils.TraduceComunication;
 
 @SuppressLint("StaticFieldLeak")
-public class LoginWorker extends AsyncTask<Void,Void,String> {
+public class RegisterWorker extends AsyncTask<Void,Void,String> {
 
     private final Utente utente;
     private final Context mContext;
@@ -23,7 +24,7 @@ public class LoginWorker extends AsyncTask<Void,Void,String> {
     private final IAccessOperation iAccessOperation;
     private ProgressCDialog progressCDialog;
 
-    public LoginWorker(Context mContext, Utente utente, String typeLogin, IAccessOperation iAccessOperation) {
+    public RegisterWorker(Context mContext, Utente utente, String typeLogin, IAccessOperation iAccessOperation) {
         super();
         this.utente = utente;
         this.typeLogin = typeLogin;
@@ -36,7 +37,7 @@ public class LoginWorker extends AsyncTask<Void,Void,String> {
         super.onPreExecute();
         progressCDialog = new ProgressCDialog(mContext);
         progressCDialog.setTitle("Caricamento in corso");
-        progressCDialog.setMessage("Login in corso...");
+        progressCDialog.setMessage("Registrazione in corso...");
         progressCDialog.show();
     }
 
@@ -47,10 +48,30 @@ public class LoginWorker extends AsyncTask<Void,Void,String> {
 
     @Override
     protected String doInBackground(Void... voids) {
-        MakeHttpRequest.sendPost(mContext, MakeHttpRequest.BASE_IP + MakeHttpRequest.LOGIN, TraduceComunication.traduce(utente, typeLogin), response -> {
+        MakeHttpRequest.sendPost(mContext,MakeHttpRequest.BASE_IP + MakeHttpRequest.REGISTER, TraduceComunication.traduce(utente, typeLogin), response -> {
             try {
-                iAccessOperation.OnCompleteOperation(new JSONObject(response));
-                closeLogging();
+                JSONObject jsonObject = new JSONObject(response);
+                if(ResultAccess.ALREADY_EXIST.equals(ResultAccess.fromValue(jsonObject.getInt("result")))) {
+                    MakeHttpRequest.sendPost(mContext, MakeHttpRequest.BASE_IP + MakeHttpRequest.LOGIN, TraduceComunication.traduce(utente, typeLogin), responseLogin -> {
+                        try {
+                            iAccessOperation.OnCompleteOperation(new JSONObject(responseLogin));
+                            closeLogging();
+                        }
+                        catch (Exception exception){
+                            exception.printStackTrace();
+                            iAccessOperation.OnError();
+                            closeLogging();
+                        }
+                    }, error -> {
+                        iAccessOperation.OnError();
+                        closeLogging();
+                    });
+
+                }
+                else{
+                    iAccessOperation.OnCompleteOperation(new JSONObject(response));
+                    closeLogging();
+                }
             }
             catch (Exception exception){
                 exception.printStackTrace();

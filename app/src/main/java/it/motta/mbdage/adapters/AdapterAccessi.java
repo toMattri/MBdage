@@ -9,20 +9,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import it.motta.mbdage.models.ItemAccessi;
-
+import it.motta.mbdage.models.ItemPassaggi;
 
 public class AdapterAccessi extends RecyclerView.Adapter<AdapterAccessi.ViewHolder> implements View.OnClickListener{
 
-
     private final Context mContext;
-    private final ArrayList<ItemAccessi> itemAccessis;
+    private final ArrayList<ItemPassaggi> itemPassaggi;
     private int selected;
 
-    public AdapterAccessi(Context mContext, ArrayList<ItemAccessi> itemAccessis) {
+    public AdapterAccessi(Context mContext, ArrayList<ItemPassaggi> itemPassaggis) {
         super();
         this.mContext = mContext;
-        this.itemAccessis = itemAccessis;
+        this.itemPassaggi = itemPassaggis;
         this.selected = -1;
     }
 
@@ -33,8 +31,8 @@ public class AdapterAccessi extends RecyclerView.Adapter<AdapterAccessi.ViewHold
         notifyItemChanged(selected);
     }
 
-    private ItemAccessi getItem(int position){
-        return position >= 0 && position < getItemCount() ? itemAccessis.get(position) : null;
+    private ItemPassaggi getItem(int position){
+        return position >= 0 && position < getItemCount() ? itemPassaggi.get(position) : null;
     }
 
     @NonNull
@@ -51,7 +49,7 @@ public class AdapterAccessi extends RecyclerView.Adapter<AdapterAccessi.ViewHold
 
     @Override
     public int getItemCount() {
-        return itemAccessis != null ? itemAccessis.size() : 0;
+        return itemPassaggi != null ? itemPassaggi.size() : 0;
     }
 
 

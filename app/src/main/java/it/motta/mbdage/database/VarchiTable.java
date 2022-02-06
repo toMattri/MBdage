@@ -25,8 +25,8 @@ public interface VarchiTable extends BaseColumns {
                     "({1} INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "{2} TEXT NOT NULL, " +
                     "{3} TEXT NOT NULL," +
-                    "{4} TEXT NOT NULL," +
-                    "{5} TEXT NOT NULL);",
+                    "{4} DOUBLE NOT NULL," +
+                    "{5} DOUBLE NOT NULL);",
             TABLE_NAME,
             _ID,
             CL_DESCRIZIONE,

@@ -12,7 +12,14 @@ import java.util.Map;
 
 public class MakeHttpRequest {
 
-    public static final String baseIP = "http://3.17.164.66/api/";
+    //   public static final String BASE_IP = "http://3.17.164.66/api/";
+    public static final String BASE_IP = "http://192.168.1.27/mbdage/api/";
+    public static final String REGISTER = "register.php";
+    public static final String REGISTER_TOKEN = "registerToken.php";
+    public static final String LOGIN = "login.php";
+    public static final String GET_VARCHI = "varchi.php";
+    public static final String GET_PASSAGGI = "passaggi.php";
+
 
     public static void sendPost(Context mContext, String url, Map<String, String> sendParams, Response.Listener<String> response, Response.ErrorListener errorListener) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, response, errorListener) {

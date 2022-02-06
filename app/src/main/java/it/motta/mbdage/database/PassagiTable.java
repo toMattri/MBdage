@@ -8,7 +8,6 @@ public interface PassagiTable extends BaseColumns {
 
     String TABLE_NAME = "tb_passaggi";
 
-    String CL_TOKEN_DISPOSITIVO = "token_dispositivo";
     String CL_ID_UTENTE = "id_utente";
     String CL_ID_VARCO = "id_varco";
     String CL_DATA = "data";
@@ -18,7 +17,6 @@ public interface PassagiTable extends BaseColumns {
             _ID,
             CL_ID_UTENTE,
             CL_ID_VARCO,
-            CL_TOKEN_DISPOSITIVO,
             CL_DATA,
             CL_DATA_SYN
     };
@@ -27,14 +25,12 @@ public interface PassagiTable extends BaseColumns {
                     "({1} INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "{2} INTEGER NOT NULL, " +
                     "{3} TEXT NOT NULL," +
-                    "{4} TEXT NOT NULL," +
-                    "{5} DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,"+
-                    "{6} DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP);",
+                    "{4} DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,"+
+                    "{5} DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP);",
             TABLE_NAME,
             _ID,
             CL_ID_UTENTE,
             CL_ID_VARCO,
-            CL_TOKEN_DISPOSITIVO,
             CL_DATA,
             CL_DATA_SYN);
 

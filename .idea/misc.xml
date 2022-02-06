@@ -17,10 +17,11 @@
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/selector_first_button.xml" value="0.265625" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout-land/activity_login.xml" value="0.31040564373897706" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/activity_login.xml" value="0.33" />
-        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/activity_main.xml" value="0.36666666666666664" />
+        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/activity_main.xml" value="0.46243739565943237" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/activity_splash.xml" value="0.36666666666666664" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/carta_layout.xml" value="0.36666666666666664" />
-        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/contet_profile.xml" value="0.36666666666666664" />
+        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/contet_profile.xml" value="0.33" />
+        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/dialog_c_progress.xml" value="0.33" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/dialog_confirm.xml" value="0.36666666666666664" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/dialog_custom.xml" value="0.36666666666666664" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/dialog_time_picker.xml" value="0.36666666666666664" />

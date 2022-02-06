@@ -43,6 +43,7 @@ public class CustomDialog extends Dialog {
         super.onCreate(savedInstanceState);
         setCancelable(false);
         setContentView(R.layout.dialog_custom);
+        getWindow().getDecorView().setBackgroundColor(mContext.getResources().getColor(R.color.zxing_transparent,null));
         txtTitle = findViewById(R.id.txtTitle);
         txtMessage = findViewById(R.id.txtMessage);
         llTitle = findViewById(R.id.llTitle);
@@ -82,7 +83,7 @@ public class CustomDialog extends Dialog {
     public void setMessage(String message) {
         this.message = message;
         if(txtMessage != null)
-            txtMessage.setText(title);
+            txtMessage.setText(message);
     }
 
 }

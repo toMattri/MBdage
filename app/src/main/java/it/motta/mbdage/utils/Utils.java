@@ -1,5 +1,6 @@
 package it.motta.mbdage.utils;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -9,11 +10,16 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import androidx.annotation.NonNull;
 
+import java.net.InetAddress;
 import java.util.Calendar;
 import java.util.Date;
+
+import it.motta.mbdage.BuildConfig;
 
 public class Utils {
 
@@ -64,7 +70,7 @@ public class Utils {
         return bitmap;
     }
 
-    public static  Date getDateLessDay(int day){
+    public static Date getDateLessDay(int day){
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -day);
         return  calendar.getTime();
@@ -76,6 +82,16 @@ public class Utils {
         calendar.add(Calendar.DAY_OF_YEAR, - (calendar.get(Calendar.DAY_OF_YEAR) -1));
 
         return  calendar.getTime();
+    }
+
+    public static boolean internetAvailability(){
+        try {
+            InetAddress ipAddr = InetAddress.getByName("google.it");
+            return !ipAddr.getHostAddress().equals("");
+        } catch (Exception e) {
+            if(BuildConfig.DEBUG)e.printStackTrace();
+            return false;
+        }
     }
 
 

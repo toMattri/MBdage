@@ -22,8 +22,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="nfc">#2196f3</color>
-    <color name="qrCode">#F32140</color>
+    <color name="nfc">#309DF4</color>
+    <color name="qrCode">#F82D4C</color>
 
 
     <color name="blueSky">#309BDF</color>

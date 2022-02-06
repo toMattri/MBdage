@@ -2,6 +2,7 @@ package it.motta.mbdage.activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -13,9 +14,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
@@ -25,36 +24,50 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.OAuthProvider;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
+import it.motta.mbdage.BuildConfig;
 import it.motta.mbdage.R;
+import it.motta.mbdage.database.DBHandler;
+import it.motta.mbdage.dialog.CustomDialog;
 import it.motta.mbdage.dialog.DateTimePickerDialog;
+import it.motta.mbdage.interfaces.IAccessOperation;
+import it.motta.mbdage.message.ResultAccess;
 import it.motta.mbdage.models.Utente;
+import it.motta.mbdage.models.evalue.TypeDialog;
+import it.motta.mbdage.models.evalue.TypeLogin;
 import it.motta.mbdage.models.evalue.TypeUtente;
-import it.motta.mbdage.utils.Parameters;
+import it.motta.mbdage.utils.TraduceComunication;
 import it.motta.mbdage.utils.Utils;
+import it.motta.mbdage.worker.LoadVarchiWoker;
+import it.motta.mbdage.worker.LoginWorker;
+import it.motta.mbdage.worker.RegisterWorker;
+import it.motta.mbdage.worker.UpdateTokenWorker;
 
 @SuppressLint({"ResourceType","ClickableViewAccessibility","NonConstantResourceId"})
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int RC_SIGN_IN = 9001;
-    private SignInButton  signInButton,signInButtonGit;
+    private SignInButton signInButton,signInButtonGit;
     private TextInputEditText edtEmailAccedi,edtPasswordAccedi,edtNomeRegistrati,edtCognomeRegistrati,edtEmailRegistrati,edtPasswordRegistrati,edtDataRegistrati;
     private FirebaseAuth mAuth;
+    private FirebaseMessaging mMessaging;
+
     private OAuthProvider.Builder provider;
     private GoogleSignInClient mGoogleSignInClient;
     private Animation centerToRight,leftToCenter;
@@ -87,8 +100,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         signInButton = findViewById(R.id.signInGoogle);
         btRegistrati = findViewById(R.id.btRegistrati);
         btAccedi = findViewById(R.id.btAccedi);
-
-
+        mMessaging = FirebaseMessaging.getInstance();
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
@@ -103,17 +115,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         signInButton.setOnClickListener(this);
 
         edtPasswordRegistrati.setOnKeyListener((v, keyCode, event) -> {
-            ((TextInputLayout) findViewById(v.getId()).getParent().getParent()).setEndIconVisible(true);
+            ((TextInputLayout)findViewById(v.getId()).getParent().getParent()).setEndIconVisible(true);
             return false;
         });
 
         edtPasswordAccedi.setOnKeyListener((v, keyCode, event) -> {
-            ((TextInputLayout) findViewById(v.getId()).getParent().getParent()).setEndIconVisible(true);
+            ((TextInputLayout)findViewById(v.getId()).getParent().getParent()).setEndIconVisible(true);
             return false;
         });
 
         edtDataRegistrati.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) {
+            if(hasFocus){
                 ((TextInputLayout) findViewById(edtEmailRegistrati.getId()).getParent().getParent()).setEndIconVisible(true);
                 saveDataRegistrazione(edtDataRegistrati);
                 edtDataRegistrati.clearFocus();
@@ -121,9 +133,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
 
         edtDataRegistrati.setOnTouchListener((v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN)
                 saveDataRegistrazione(edtDataRegistrati);
-            }
             return true;
         });
 
@@ -135,14 +146,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Date date = Objects.requireNonNull(edt.getText()).toString().length() == 0 ? Utils.getFirstDayOfYear(20) : new SimpleDateFormat("dd/MM/yyyy").parse(edt.getText().toString());
             DateTimePickerDialog dateTimePickerDialog = new DateTimePickerDialog(this, "Data di nascita", date);
             dateTimePickerDialog.setOnDismissListener(dialog -> {
-                if (dateTimePickerDialog.getDateChoosed() != null) {
+                if (dateTimePickerDialog.getDateChoosed() != null)
                     edt.setText(new SimpleDateFormat("dd/MM/yyyy").format(dateTimePickerDialog.getDateChoosed()));
-                }
             });
             dateTimePickerDialog.show();
         } catch (ParseException e) {
-            if (Parameters.DEBUG_MODE) e.printStackTrace();
-
+            if (BuildConfig.DEBUG)
+                e.printStackTrace();
         }
     }
 
@@ -167,15 +177,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
+
     private void signInGitHub(){
         mAuth.startActivityForSignInWithProvider(this, provider.build())
-                .addOnSuccessListener(authResult -> {
-                    Log.e("RES" , authResult.getUser().getEmail());
-                    // authResult.getCredential().getProvider().get
-                })
-                .addOnFailureListener(e -> {
-                    e.printStackTrace();
-                });
+            .addOnSuccessListener(authResult -> {
+                Log.e("RES" , authResult.getUser().getEmail());
+                new RegisterWorker(this,createUser(authResult.getUser(),""),TypeLogin.GIT,iAccessOperation).execute();
+            })
+            .addOnFailureListener(e -> {
+                e.printStackTrace();
+                new CustomDialog(this,"Attenzione","Non è stato trovato nessun utente con i dati inseriti", TypeDialog.WARING).show();
+            });
     }
 
     @Override
@@ -184,30 +196,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
-                // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 Log.d("TAG", "firebaseAuthWithGoogle:" + account.getId());
-                firebaseAuthWithGoogle(account.getIdToken());
+                firebaseAuthWithGoogle(account.getIdToken(),account.getPhotoUrl().toString());
             } catch (ApiException e) {
-                // Google Sign In failed, update UI appropriately
+                new CustomDialog(this,"Attenzione","Non è stato trovato nessun utente con i dati inseriti", TypeDialog.WARING).show();
                 Log.w("TAG", "Google sign in failed", e);
             }
         }
     }
 
-    private void firebaseAuthWithGoogle(String idToken) {
+    private void firebaseAuthWithGoogle(String idToken,String urlImage) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential).addOnCompleteListener(this, task -> {
             if (task.isSuccessful()) {
-                // Sign in success, update UI with the signed-in user's information
                 Log.d("TAG", "signInWithCredential:success");
                 FirebaseUser user = mAuth.getCurrentUser();
-
-                // updateUI(user);
+                new RegisterWorker(this,createUserWithImage(user,urlImage),TypeLogin.GOOGLE,iAccessOperation).execute();
             } else {
-                // If sign in fails, display a message to the user.
                 Log.w("TAG", "signInWithCredential:failure", task.getException());
-                // updateUI(null);
+                new CustomDialog(this, "Attenzione", "Non è stato trovato nessun utente con i dati inseriti", TypeDialog.WARING).show();
             }
         });
     }
@@ -216,20 +224,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.txtAccedi:
-                llSignWIthOther.setVisibility(View.VISIBLE);
                 cardLogin.setVisibility(View.VISIBLE);
                 cardRegistrati.setVisibility(View.GONE);
                 cardLogin.startAnimation(leftToCenter);
                 cardRegistrati.startAnimation(centerToRight);
+                llSignWIthOther.setVisibility(View.VISIBLE);
                 disableAllerror();
                 break;
             case R.id.txtRegistrati:
+                llSignWIthOther.setVisibility(View.GONE);
                 cardLogin.setVisibility(View.GONE);
                 cardRegistrati.setVisibility(View.VISIBLE);
                 cardLogin.startAnimation(centerToRight);
                 cardRegistrati.startAnimation(leftToCenter);
                 txtRegistrati.setTag(false);
-                llSignWIthOther.setVisibility(View.GONE);
                 disableAllerror();
                 break;
             case R.id.btRegistrati:
@@ -262,19 +270,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (!blRegistrati) return;
 
                 mAuth.createUserWithEmailAndPassword(edtEmailRegistrati.getText().toString().trim(),  edtPasswordRegistrati.getText().toString().trim())
-                        .addOnCompleteListener(this, task -> {
-                            if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
-                                Log.d("TAG", "createUserWithEmail:success");
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                //updateUI(user);
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                Log.w("TAG", "createUserWithEmail:failure", task.getException());
-                                Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                                //updateUI(null);
-                            }
-                        });
+                    .addOnCompleteListener(this, task -> {
+                        if (task.isSuccessful()) {
+                            Log.d("TAG", "createUserWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            new RegisterWorker(this,createUser(user,""),TypeLogin.EMIAL,iAccessOperation).execute();
+                        } else
+                            new CustomDialog(this,"Attenzione","Non è stato trovato nessun utente con i dati inseriti", TypeDialog.WARING).show();
+                    });
                 break;
             case R.id.btAccedi:
                 boolean blAccedi = true;
@@ -293,20 +296,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (!blAccedi) return;
 
                 mAuth.signInWithEmailAndPassword(edtEmailAccedi.getText().toString(), edtPasswordAccedi.getText().toString())
-                        .addOnCompleteListener(this, task -> {
-                            if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
-                                Log.d("TAG", "signInWithEmail:success");
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                // updateUI(user);
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                Log.w("TAG", "signInWithEmail:failure", task.getException());
-                                Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                        Toast.LENGTH_SHORT).show();
-                                // updateUI(null);
-                            }
-                        });
+                    .addOnCompleteListener(this, task -> {
+                        if (task.isSuccessful()) {
+                            Log.d("TAG", "signInWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            new LoginWorker(this,createUser(user,""), TypeLogin.EMIAL,iAccessOperation).execute();
+                        } else {
+                            new CustomDialog(this,"Attenzione","Non è stato trovato nessun utente con i dati inseriti", TypeDialog.WARING).show();
+                            Log.w("TAG", "signInWithEmail:failure", task.getException());
+                        }
+                    });
                 break;
             case R.id.signInGoogle:
                 signInGoogle();
@@ -315,20 +314,76 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 signInGitHub();
                 break;
         }
-
     }
 
-    private Utente createUser(FirebaseUser firebaseUser){
-        return new Utente(firebaseUser.getDisplayName(),firebaseUser.getEmail(),"",TypeUtente.NOCOMPLETED,firebaseUser.getUid());
+    private Utente createUserWithImage(FirebaseUser firebaseUser,String urlImage){
+        return new Utente(firebaseUser.getDisplayName(),firebaseUser.getEmail(),"",TypeUtente.NOCOMPLETED,firebaseUser.getUid(),urlImage);
     }
 
-    private Utente createUser(FirebaseUser firebaseUser,String pass,String Data){
-        return new Utente(firebaseUser.getDisplayName(),firebaseUser.getEmail(),pass,Data, TypeUtente.NOCOMPLETED,firebaseUser.getUid());
+    private Utente createUser(FirebaseUser firebaseUser,String Data){
+        return new Utente(firebaseUser.getDisplayName(),firebaseUser.getEmail(),Data, TypeUtente.NOCOMPLETED,firebaseUser.getUid(),"");
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         return super.onKeyDown(keyCode, event);
-
     }
+
+
+    private final IAccessOperation iAccessOperation = new IAccessOperation() {
+        @Override
+        public void OnCompleteOperation(JSONObject response) {
+            try {
+                int result = response.getInt("result");
+                CustomDialog customDialog;
+                switch (ResultAccess.fromValue(result)){
+                    case SUCCESS:
+                        Utente utente = TraduceComunication.getUtente(response.getJSONObject("Utente"));
+                        reloadToken(utente.getId());
+                        DBHandler.getIstance(LoginActivity.this).logginUser(utente);
+                        new LoadVarchiWoker(LoginActivity.this,0).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                        finish();
+                        break;
+                    case ERR_PARAM:
+                        customDialog = new CustomDialog(LoginActivity.this,"Errore","Errore nell'inserimento dei parametri di accesso", TypeDialog.ERROR);
+                        customDialog.show();
+                        break;
+                    case NOT_CREATED:
+                        customDialog = new CustomDialog(LoginActivity.this,"Errore","Si è verificato un errore durante la creazione dell'utente!", TypeDialog.ERROR);
+                        customDialog.show();
+                        break;
+                    case NOT_FIND:
+                        customDialog = new CustomDialog(LoginActivity.this,"Attenzione","Non è stato trovato nessun utente con i dati inseriti", TypeDialog.WARING);
+                        customDialog.show();
+                        break;
+                }
+            }catch (Exception ex){
+                ex.printStackTrace();
+                CustomDialog customDialog = new CustomDialog(LoginActivity.this,"Attenzione","Si è verificato un errore", TypeDialog.WARING);
+                customDialog.show();
+            }
+
+        }
+
+        @Override
+        public void OnError() {
+            CustomDialog customDialog = new CustomDialog(LoginActivity.this,"Errore","Errore durante la comunicazione con il server!", TypeDialog.ERROR);
+            customDialog.show();
+        }
+
+    };
+
+    private void reloadToken(int idUtente){
+        mMessaging.getToken().addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+                Log.e("TAG", "Fetching FCM registration token failed", task.getException());
+                return;
+            }
+
+            String token = task.getResult();
+            new UpdateTokenWorker(this,idUtente,token).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        });
+    }
+
 }

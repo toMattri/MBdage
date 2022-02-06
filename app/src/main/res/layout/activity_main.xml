@@ -8,73 +8,6 @@
     android:orientation="vertical"
     tools:context=".activities.MainActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-
-        <ImageButton
-            android:id="@+id/btLingua"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_weight="0"
-            android:background="@android:color/transparent"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_it" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="40dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="TextView" />
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:elevation="6dp"
-            android:innerRadius="0dp"
-            android:shape="ring"
-            android:thicknessRatio="1.9"
-            app:cardCornerRadius="40dp">
-
-            <ImageButton
-                android:id="@+id/btScanQr"
-                android:layout_width="40dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0"
-                android:background="@android:color/transparent"
-                android:scaleType="centerInside"
-                android:src="@drawable/selector_nfc" />
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-       android:layout_marginStart="5dp"
-       android:layout_marginEnd="5dp"
-            android:elevation="6dp"
-            android:innerRadius="0dp"
-            android:shape="ring"
-            android:thicknessRatio="1.9"
-            app:cardCornerRadius="40dp">
-
-            <ImageButton
-                android:id="@+id/btNfc"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_weight="0"
-                android:background="@android:color/transparent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/selector_qrcode" />
-        </androidx.cardview.widget.CardView>
-
-    </LinearLayout>
-
     <androidx.cardview.widget.CardView
         android:id="@+id/cardProfilo"
         android:layout_width="match_parent"
@@ -92,10 +25,53 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cardMovimenti"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_margin="15dp"
         app:cardCornerRadius="12dp"
         app:cardElevation="6dp"
         app:cardPreventCornerOverlap="true"
-        app:cardUseCompatPadding="false" />
+        app:cardUseCompatPadding="false" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="Ultimi accessi" />
+
+                <ImageButton
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_weight="0"
+                    android:background="@android:color/transparent"
+                    android:padding="5dp"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/ic_filter" />
+
+            </LinearLayout>
+
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/refreshLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/listAccessi"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 </LinearLayout>
