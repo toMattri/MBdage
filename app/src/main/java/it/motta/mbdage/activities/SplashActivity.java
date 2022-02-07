@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Window;
 import android.widget.Toast;
 
@@ -16,12 +17,26 @@ import androidx.core.content.ContextCompat;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import org.json.JSONObject;
 
 import java.util.Objects;
 
 import it.motta.mbdage.R;
+import it.motta.mbdage.database.DBHandler;
+import it.motta.mbdage.dialog.CustomDialog;
+import it.motta.mbdage.interfaces.IAccessOperation;
+import it.motta.mbdage.message.ResultAccess;
+import it.motta.mbdage.models.Utente;
+import it.motta.mbdage.models.evalue.TypeDialog;
+import it.motta.mbdage.models.evalue.TypeLogin;
+import it.motta.mbdage.models.evalue.TypeUtente;
+import it.motta.mbdage.utils.TraduceComunication;
 import it.motta.mbdage.utils.Utils;
 import it.motta.mbdage.worker.LoadVarchiWoker;
+import it.motta.mbdage.worker.LoginWorker;
+import it.motta.mbdage.worker.UpdateTokenWorker;
 
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends AppCompatActivity {
@@ -107,9 +122,30 @@ public class SplashActivity extends AppCompatActivity {
         if(currentUser == null)
             startActivity(new Intent(this,LoginActivity.class));
         else {
+           Utente utente =  DBHandler.getIstance(this).getUtente();
+            if(utente == null){
+                String typeLogin;
+                switch (currentUser.getProviderId()){
+                    case "google.com":
+                        typeLogin = TypeLogin.GOOGLE;
+                        break;
+                    case "github.com":
+                        typeLogin = TypeLogin.GIT;
+                        break;
+                    default:
+                        typeLogin = TypeLogin.EMIAL;
+
+                }
+
+                new LoginWorker(this,createUser(currentUser), typeLogin,iAccessOperation).execute();
+
+            }else{
+                reloadToken(utente.getId());
                 new LoadVarchiWoker(this,0).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                //  new LoadVarchiWoker(this,0).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            startActivity(new Intent(this, MainActivity.class));
+                startActivity(new Intent(this, MainActivity.class));
+                finish();
+            }
+
         }
     }
 
@@ -120,5 +156,60 @@ public class SplashActivity extends AppCompatActivity {
         FirebaseApp.initializeApp(this);
 
     }
+
+    private Utente createUser(FirebaseUser firebaseUser){
+        return new Utente(" ",firebaseUser.getEmail()," ", TypeUtente.NOCOMPLETED,firebaseUser.getUid(),"");
+    }
+
+
+    private final IAccessOperation iAccessOperation = new IAccessOperation() {
+        @Override
+        public void OnCompleteOperation(JSONObject response) {
+            try {
+                int result = response.getInt("result");
+
+                switch (ResultAccess.fromValue(result)){
+                    case SUCCESS:
+                        Utente utente = TraduceComunication.getUtente(response.getJSONObject("Utente"));
+                        reloadToken(utente.getId());
+                        DBHandler.getIstance(SplashActivity.this).logginUser(utente);
+                        new LoadVarchiWoker(SplashActivity.this,0).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        startActivity(new Intent(SplashActivity.this,MainActivity.class));
+                        finish();
+                        break;
+                    default:
+                        startActivity(new Intent(SplashActivity.this,LoginActivity.class));
+                        finish();
+
+                }
+            }catch (Exception ex){
+                ex.printStackTrace();
+                startActivity(new Intent(SplashActivity.this,LoginActivity.class));
+                finish();
+            }
+
+        }
+
+        @Override
+        public void OnError() {
+            startActivity(new Intent(SplashActivity.this,LoginActivity.class));
+            finish();
+        }
+
+    };
+
+    private void reloadToken(int idUtente){
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+                Log.e("TAG", "Fetching FCM registration token failed", task.getException());
+                return;
+            }
+
+            String token = task.getResult();
+            new UpdateTokenWorker(this,idUtente,token).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        });
+    }
+
+
 
 }

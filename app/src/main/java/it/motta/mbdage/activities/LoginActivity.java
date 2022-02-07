@@ -335,10 +335,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Utente createUserWithImage(FirebaseUser firebaseUser,String urlImage){
         return new Utente(firebaseUser.getDisplayName(),firebaseUser.getEmail(),"",TypeUtente.NOCOMPLETED,firebaseUser.getUid(),urlImage);
     }
-
     private Utente createUser(FirebaseUser firebaseUser,String displayName,String Data){
         return new Utente(displayName,firebaseUser.getEmail(),Data, TypeUtente.NOCOMPLETED,firebaseUser.getUid(),"");
     }
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

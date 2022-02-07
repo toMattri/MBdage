@@ -59,7 +59,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     if(!StringUtils.isEmpty(utente.getData()) && !utente.getData().equalsIgnoreCase("null")) {
       try {
        String data = new SimpleDateFormat("dd/MM/yyyy").format(new SimpleDateFormat( "yyyy-MM-dd").parse(utente.getData()));
-
         edtDataRegistrati.setText((data));
       }catch (Exception exx){
         exx.printStackTrace();
@@ -119,6 +118,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     }
 
   }
+
   private final IAccessOperation iAccessOperation = new IAccessOperation() {
     @Override
     public void OnCompleteOperation(JSONObject response) {
@@ -145,7 +145,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void OnError() {
       new CustomDialog(SettingsActivity.this,"Errore ","Si è verificato un errore durante la comunicazione con il server", TypeDialog.WARING).show();
-
     }
   };
 
