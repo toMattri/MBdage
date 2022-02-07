@@ -58,7 +58,7 @@ public class TraduceComunication {
             JSONObject js;
             for(int i = 0;i<jsonArray.length();i++){
                 js = jsonArray.getJSONObject(i);
-                passaggis.add(new Passaggio(js.getInt("id_utente"),js.getInt("id_varco"),js.getString("data")));
+                passaggis.add(new Passaggio(js.getInt("id"),js.getInt("id_utente"),js.getInt("id_varco"),js.getString("data")));
             }
             return passaggis;
         }
@@ -109,6 +109,7 @@ public class TraduceComunication {
     private static final String IDVARCO = "IdVarco";
     private static final String DATADAL = "DataDal";
     private static final String DATAAL = "DataAl";
+    private static final String PAGER = "Pager";
 
 
     public static Map<String,String> traduce(FilterPassaggi filterPassaggi){
@@ -122,6 +123,8 @@ public class TraduceComunication {
                 request.put(DATADAL, filterPassaggi.getTimeDal());
             if (!StringUtils.isEmpty(filterPassaggi.getTimeAl()))
                 request.put(DATAAL, filterPassaggi.getTimeAl());
+            request.put(PAGER, String.valueOf(filterPassaggi.getPager()));
+
         }
         return request;
     }

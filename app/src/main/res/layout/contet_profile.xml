@@ -35,6 +35,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
@@ -67,30 +68,51 @@
                 android:textSize="14sp" />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/btImpostazioni"
+                android:layout_width="20sp"
+                android:layout_height="20sp"
+                android:layout_weight="0"
+                android:background="@android:color/transparent"
+                android:scaleType="fitStart"
+                app:srcCompat="@drawable/ic_menu" />
+        </LinearLayout>
+
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
         android:layout_marginTop="25dp"
-        android:layout_marginEnd="5dp"
         android:layout_marginBottom="10dp"
-        android:gravity="start"
+        android:gravity="end"
         android:orientation="horizontal">
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageButton
+            android:id="@+id/btNfc"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginHorizontal="10dp"
             android:layout_weight="0"
-            android:text="Button" />
+            android:background="@drawable/selector_nfc"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/ic_nfc" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageButton
+            android:id="@+id/btQr"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginHorizontal="10dp"
             android:layout_weight="0"
-            android:text="Button" />
-
+            android:background="@drawable/selector_qrcode"
+            android:padding="6dp"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/ic_qr" />
     </LinearLayout>
 </LinearLayout>

@@ -53,6 +53,7 @@ public class LoadPassaggiWorker extends AsyncTask<Void,Void,String> {
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
+                    iLoadPassaggi.OnError();
                 }
             }, error -> {
                 iLoadPassaggi.OnError();

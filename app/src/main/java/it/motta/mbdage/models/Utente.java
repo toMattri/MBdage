@@ -1,11 +1,15 @@
 package it.motta.mbdage.models;
 
+import java.io.Serializable;
+
 import it.motta.mbdage.models.evalue.TypeUtente;
 
-public class Utente {
+public class Utente implements Serializable {
+
 
     private final int id;
-    private final String displayName,email,data,UID,imageUrl;
+    private final String displayName,email,UID;
+    private String data,imageUrl;
     private final TypeUtente tipoUtente;
 
     public Utente(int id,String displayName, String email,String data, TypeUtente tipoUtente,String UID,String imageUrl) {
@@ -35,6 +39,14 @@ public class Utente {
 
     public String getData() {
         return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public TypeUtente getTipoUtente() {

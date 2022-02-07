@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import it.motta.mbdage.models.ItemPassaggi;
 import it.motta.mbdage.models.Passaggio;
@@ -51,7 +52,7 @@ public class DBHandler extends SQLiteOpenHelper {
         try(Cursor c = getReadableDatabase().rawQuery("Select * FROM " + UtenteTable.TABLE_NAME +" LIMIT 1",null)) {
             if(c.moveToFirst()){
                 return new Utente(c.getInt(c.getColumnIndex(UtenteTable._ID)),c.getString(c.getColumnIndex(UtenteTable.CL_DISPLAY_NAME)),c.getString(c.getColumnIndex(UtenteTable.CL_EMAIL)),
-                    c.getString(c.getColumnIndex(UtenteTable.CL_EMAIL)), TypeUtente.values()[c.getInt(c.getColumnIndex(UtenteTable.CL_TIPO))],"", c.getString(c.getColumnIndex(UtenteTable.CL_URL_IMAGE)));
+                    c.getString(c.getColumnIndex(UtenteTable.CL_NASCITA)), TypeUtente.values()[c.getInt(c.getColumnIndex(UtenteTable.CL_TIPO))],"", c.getString(c.getColumnIndex(UtenteTable.CL_URL_IMAGE)));
             }
         }catch (Exception ex){
             ex.printStackTrace();
@@ -61,7 +62,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
 
     public void logginUser(Utente utente){
-        getWritableDatabase().delete(UtenteTable.TABLE_NAME,UtenteTable._ID + " > ?",new String[]{"0"});
+        deleteUtente();
         ContentValues cv = new ContentValues();
         cv.put(UtenteTable._ID,utente.getId());
         cv.put(UtenteTable.CL_DISPLAY_NAME,utente.getDisplayName());
@@ -70,6 +71,10 @@ public class DBHandler extends SQLiteOpenHelper {
         cv.put(UtenteTable.CL_TIPO,utente.getTipoUtente().ordinal());
         cv.put(UtenteTable.CL_URL_IMAGE,utente.getImageUrl());
         getWritableDatabase().insertOrThrow(UtenteTable.TABLE_NAME,null,cv);
+    }
+
+    public void deleteUtente(){
+        getWritableDatabase().delete(UtenteTable.TABLE_NAME,UtenteTable._ID + " > ?",new String[]{"0"});
     }
 
     public void writeVarchi(ArrayList<Varco> varchi){
@@ -86,12 +91,16 @@ public class DBHandler extends SQLiteOpenHelper {
         }
     }
 
+
+
     public void writePassaggi(ArrayList<Passaggio> passaggi){
-        getWritableDatabase().delete(PassagiTable.TABLE_NAME,PassagiTable._ID + " > ?",new String[]{"0"});
+        ArrayList<Integer> mapInt = (ArrayList<Integer>) passaggi.stream().mapToInt(Passaggio::getId).boxed().collect(Collectors.toList());
+        getWritableDatabase().delete(PassagiTable.TABLE_NAME,PassagiTable._ID + " IN (?)",new String[]{mapInt.toString().substring(1,mapInt.toString().length()-1)});
         ContentValues cv;
         for(Passaggio pas : passaggi) {
             cv = new ContentValues();
             cv.put(PassagiTable.CL_ID_UTENTE, pas.getIdUtente());
+            cv.put(PassagiTable._ID, pas.getId());
             cv.put(PassagiTable.CL_ID_VARCO, pas.getIdVarco());
             cv.put(PassagiTable.CL_DATA, pas.getData());
             getWritableDatabase().insertOrThrow(PassagiTable.TABLE_NAME, null, cv);
@@ -101,6 +110,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public ArrayList<ItemPassaggi> getItemPassaggi(int idUtente){
         ArrayList<ItemPassaggi> passaggios = new ArrayList<>();
         String sql = "SELECT " +
+            PassagiTable.TABLE_NAME + "." + PassagiTable._ID +"," +
             PassagiTable.TABLE_NAME + "." + PassagiTable.CL_ID_UTENTE +"," +
             PassagiTable.TABLE_NAME + "." + PassagiTable.CL_ID_VARCO +"," +
             PassagiTable.TABLE_NAME + "." + PassagiTable.CL_DATA  +"," +
@@ -114,8 +124,8 @@ public class DBHandler extends SQLiteOpenHelper {
             " where " + PassagiTable.TABLE_NAME + "." + PassagiTable.CL_ID_UTENTE + " = " + idUtente + "";
 
         try(Cursor c = getReadableDatabase().rawQuery(sql, null)) {
-            if(c.moveToNext()){
-                passaggios.add(new ItemPassaggi(c.getInt(0),c.getString(2),new Varco(c.getInt(1),c.getDouble(4),c.getDouble(5), c.getString(3),c.getString(6))));
+            while(c.moveToNext()){
+                passaggios.add(new ItemPassaggi(c.getInt(0),c.getInt(1),c.getString(3),new Varco(c.getInt(2),c.getDouble(5),c.getDouble(6), c.getString(4),c.getString(7))));
 
             }
         }catch (Exception ex){
@@ -123,6 +133,34 @@ public class DBHandler extends SQLiteOpenHelper {
         }
         return passaggios;
     }
+
+    public void getItemPassaggiWhitLoaded(int idUtente,ArrayList<ItemPassaggi> alreadyLoaded){
+        ArrayList<Integer> mapInt = (ArrayList<Integer>) alreadyLoaded.stream().mapToInt(ItemPassaggi::getIdPassaggio).boxed().collect(Collectors.toList());
+
+        String sql = "SELECT " +
+            PassagiTable.TABLE_NAME + "." + PassagiTable._ID +"," +
+            PassagiTable.TABLE_NAME + "." + PassagiTable.CL_ID_UTENTE +"," +
+            PassagiTable.TABLE_NAME + "." + PassagiTable.CL_ID_VARCO +"," +
+            PassagiTable.TABLE_NAME + "." + PassagiTable.CL_DATA  +"," +
+            VarchiTable.TABLE_NAME + "." + VarchiTable.CL_DESCRIZIONE  +"," +
+            VarchiTable.TABLE_NAME + "." + VarchiTable.CL_LATITUDINE  +"," +
+            VarchiTable.TABLE_NAME + "." + VarchiTable.CL_LONGITUDINE  +"," +
+            VarchiTable.TABLE_NAME + "." + VarchiTable.CL_IMAGE  +
+            " FROM " + PassagiTable.TABLE_NAME +" LEFT JOIN " + VarchiTable.TABLE_NAME + " ON " +
+            PassagiTable.TABLE_NAME + "." + PassagiTable.CL_ID_VARCO +" = " + VarchiTable.TABLE_NAME + "." + VarchiTable._ID +
+
+            " where " + PassagiTable.TABLE_NAME + "." + PassagiTable.CL_ID_UTENTE + " = " + idUtente + " AND " +
+            PassagiTable.TABLE_NAME +"."+PassagiTable._ID + " NOT IN ("+mapInt.toString().substring(1,mapInt.toString().length()-1)+")";
+
+        try(Cursor c = getReadableDatabase().rawQuery(sql, null)) {
+            while(c.moveToNext()){
+                alreadyLoaded.add(new ItemPassaggi(c.getInt(0),c.getInt(1),c.getString(3),new Varco(c.getInt(2),c.getDouble(5),c.getDouble(6), c.getString(4),c.getString(7))));
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

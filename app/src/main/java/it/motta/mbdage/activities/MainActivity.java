@@ -12,12 +12,15 @@ import android.view.View;
 import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -29,8 +32,6 @@ import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Objects;
 
 import it.motta.mbdage.R;
@@ -38,7 +39,9 @@ import it.motta.mbdage.adapters.AdapterAccessi;
 import it.motta.mbdage.database.DBHandler;
 import it.motta.mbdage.interfaces.ILoadPassaggi;
 import it.motta.mbdage.models.Utente;
+import it.motta.mbdage.models.evalue.TypeUtente;
 import it.motta.mbdage.models.filter.FilterPassaggi;
+import it.motta.mbdage.utils.Parameters;
 import it.motta.mbdage.utils.Utils;
 import it.motta.mbdage.worker.LoadPassaggiWorker;
 
@@ -52,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView list;
     private FilterPassaggi filterPassaggi;
-
+    private boolean loading = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,45 +68,97 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         list = findViewById(R.id.listAccessi);
         cardProfilo.addView(setContentProfilo());
         swipeRefreshLayout.setOnRefreshListener(this);
-        list.setLayoutManager(new LinearLayoutManager(this));
         filterPassaggi = new FilterPassaggi(utente.getId());
+        swipeRefreshLayout.setRefreshing(true);
+        this.onRefresh();
+        final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) list.getLayoutManager();
 
-        //  btNfc.setOnClickListener(this);
+        list.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0) {
+                    Log.e("test","reached the last element of recyclerview");
+                    int visibleItemCount = linearLayoutManager.getChildCount();
+                    int  totalItemCount = linearLayoutManager.getItemCount();
+                    int  pastVisiblesItems = linearLayoutManager.findFirstVisibleItemPosition();
+
+                    if (loading) {
+                        if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                            onLoadMore();
+                        }
+                    }
+                }
+            }
+        });
     }
 
     private View setContentProfilo(){
         View view = LayoutInflater.from(this).inflate(R.layout.contet_profile,null);
         ImageView imgProfilo = view.findViewById(R.id.imgProfilo);
         TextView txtDisplay = view.findViewById(R.id.txtDisplayName);
-
         TextView txtEmail = view.findViewById(R.id.txtEmail);
         txtDisplay.setText(utente.getDisplayName());
         txtEmail.setText(utente.getEmail());
         if(!StringUtils.isEmpty(utente.getImageUrl()))
             Picasso.get().load(Uri.decode(utente.getImageUrl())).resize(80,80).centerInside().into(imgProfilo);
+        ImageButton btNfc = view.findViewById(R.id.btNfc);
+        ImageButton btQr = view.findViewById(R.id.btQr);
+        ImageButton btImpostazioni = view.findViewById(R.id.btImpostazioni);
+        if(utente.getTipoUtente().equals(TypeUtente.NOCOMPLETED)){
+            btImpostazioni.setImageDrawable(getResources().getDrawable(R.drawable.ic_menu_err,null));
+        }
 
+        btQr.setOnClickListener(this);
+        btImpostazioni.setOnClickListener(this);
         return view;
     }
 
     @Override
     public void onClick(View view){
         switch (view.getId()){
-          /*  case R.id.btNfc:
+            case R.id.btQr:
                 ScanOptions options = new ScanOptions();
                 options.setCaptureActivity(ScreenQrActivity.class);
                 options.setCameraId(1);
                 options.setPrompt("Scan qr");
                 options.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
-                barcodeLauncher.launch(options);*/
+                barcodeLauncher.launch(options);
+                break;
+            case R.id.btImpostazioni:
+                PopupMenu menu = new PopupMenu(this, view);
+                menu.getMenu().add("Impostazioni").setNumericShortcut('0');
+                menu.getMenu().add("Logout").setNumericShortcut('1');
+
+                menu.setOnMenuItemClickListener(item -> {
+                    switch (item.getNumericShortcut()){
+                        case '0':
+                            Intent intent = new Intent(this,SettingsActivity.class);
+                            intent.putExtra(Parameters.INTENT_UTENTE,utente);
+                            startActivity(intent);
+                            break;
+                        case '1':
+                            Utils.logOut(this);
+                    }
+                    return true;
+                });
+                menu.show();
         }
     }
 
-
     @Override
     public void onRefresh() {
+        loading = false;
         new Handler().postDelayed(() -> {
+            filterPassaggi.resetPager();
             new LoadPassaggiWorker(this,filterPassaggi,iLoadPassaggi).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }, 2000);
+    }
 
+    public void onLoadMore() {
+        swipeRefreshLayout.setRefreshing(true);
+        new Handler().postDelayed(() -> {
+            filterPassaggi.updatePager();
+            new LoadPassaggiWorker(this,filterPassaggi,iLoadPassaggi).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }, 2000);
     }
 
@@ -111,18 +166,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final ILoadPassaggi iLoadPassaggi = new ILoadPassaggi() {
         @Override
         public void OnComplete() {
-            list.setAdapter(new AdapterAccessi(MainActivity.this,DBHandler.getIstance(MainActivity.this).getItemPassaggi(utente.getId())));
+            if(loading){
+                DBHandler.getIstance(MainActivity.this).getItemPassaggiWhitLoaded(utente.getId(),((AdapterAccessi)list.getAdapter()).getItems());
+                list.getAdapter().notifyDataSetChanged();
+            }else {
+                list.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+                DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(MainActivity.this, DividerItemDecoration.VERTICAL);
+                list.addItemDecoration(dividerItemDecoration);
+                list.setAdapter(new AdapterAccessi(MainActivity.this, DBHandler.getIstance(MainActivity.this).getItemPassaggi(utente.getId())));
+            }
             swipeRefreshLayout.setRefreshing(false);
+            loading = true;
         }
 
         @Override
         public void OnError() {
             swipeRefreshLayout.setRefreshing(false);
+            loading = true;
         }
 
         @Override
         public void OnCompleteWithout() {
             swipeRefreshLayout.setRefreshing(false);
+            loading = true;
         }
     };
 

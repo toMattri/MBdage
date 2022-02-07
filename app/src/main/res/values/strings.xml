@@ -1,4 +1,15 @@
 <resources>
     <string name="app_name">MBdage</string>
+    <string name="settingsActivity">Impostazioni</string>
+
+
+
+
+    <string name="setting_utente">Utente</string>
+    <string name="setting_salva">Salva</string>
+    <string name="no_complete_utente">Conferma il tuo utente con il primo accesso ad un varco!</string>
+
+
+    <string name="hint_data">Data</string>
 
 </resources>

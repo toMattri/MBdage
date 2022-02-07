@@ -34,6 +34,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.OAuthProvider;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 
 import java.text.ParseException;
@@ -182,7 +183,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mAuth.startActivityForSignInWithProvider(this, provider.build())
             .addOnSuccessListener(authResult -> {
                 Log.e("RES" , authResult.getUser().getEmail());
-                new RegisterWorker(this,createUser(authResult.getUser(),""),TypeLogin.GIT,iAccessOperation).execute();
+                new RegisterWorker(this,createUserWithImage(authResult.getUser(),""),TypeLogin.GIT,iAccessOperation).execute();
             })
             .addOnFailureListener(e -> {
                 e.printStackTrace();
@@ -220,6 +221,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
+    @SuppressLint("SimpleDateFormat")
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -267,16 +269,30 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     edtPasswordRegistrati.setError("Inserire una password valida");
                 }
 
+                String data = edtDataRegistrati.getText().toString() ;
+                if(StringUtils.isEmpty(data)) {
+                    new CustomDialog(this, "Attenzione", "Si prega di inserire una data!", TypeDialog.WARING).show();
+                    return;
+                }
+                try{
+                    data = new SimpleDateFormat("yyyy-MM-dd").format(new SimpleDateFormat("dd/MM/yyyy").parse(data));
+                }catch (Exception ex){
+                    ex.printStackTrace();
+                    new CustomDialog(this,"Errore","Si è verificato un errore", TypeDialog.ERROR).show();
+                    blRegistrati = false;
+                }
+
                 if (!blRegistrati) return;
 
-                mAuth.createUserWithEmailAndPassword(edtEmailRegistrati.getText().toString().trim(),  edtPasswordRegistrati.getText().toString().trim())
+                String finalData = data;
+                mAuth.createUserWithEmailAndPassword(edtEmailRegistrati.getText().toString().trim(),edtPasswordRegistrati.getText().toString().trim())
                     .addOnCompleteListener(this, task -> {
                         if (task.isSuccessful()) {
                             Log.d("TAG", "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            new RegisterWorker(this,createUser(user,""),TypeLogin.EMIAL,iAccessOperation).execute();
+                            new RegisterWorker(this,createUser(user,edtCognomeRegistrati.getText().toString() + " " + edtNomeRegistrati.getText().toString(), finalData),TypeLogin.EMIAL,iAccessOperation).execute();
                         } else
-                            new CustomDialog(this,"Attenzione","Non è stato trovato nessun utente con i dati inseriti", TypeDialog.WARING).show();
+                            new CustomDialog(this,"Attenzione","Utente già presente!", TypeDialog.WARING).show();
                     });
                 break;
             case R.id.btAccedi:
@@ -300,7 +316,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         if (task.isSuccessful()) {
                             Log.d("TAG", "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            new LoginWorker(this,createUser(user,""), TypeLogin.EMIAL,iAccessOperation).execute();
+                            new LoginWorker(this,createUserWithImage(user,""), TypeLogin.EMIAL,iAccessOperation).execute();
                         } else {
                             new CustomDialog(this,"Attenzione","Non è stato trovato nessun utente con i dati inseriti", TypeDialog.WARING).show();
                             Log.w("TAG", "signInWithEmail:failure", task.getException());
@@ -320,8 +336,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         return new Utente(firebaseUser.getDisplayName(),firebaseUser.getEmail(),"",TypeUtente.NOCOMPLETED,firebaseUser.getUid(),urlImage);
     }
 
-    private Utente createUser(FirebaseUser firebaseUser,String Data){
-        return new Utente(firebaseUser.getDisplayName(),firebaseUser.getEmail(),Data, TypeUtente.NOCOMPLETED,firebaseUser.getUid(),"");
+    private Utente createUser(FirebaseUser firebaseUser,String displayName,String Data){
+        return new Utente(displayName,firebaseUser.getEmail(),Data, TypeUtente.NOCOMPLETED,firebaseUser.getUid(),"");
     }
 
     @Override

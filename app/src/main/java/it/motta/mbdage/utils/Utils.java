@@ -1,6 +1,9 @@
 package it.motta.mbdage.utils;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -10,16 +13,21 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.net.InetAddress;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 import it.motta.mbdage.BuildConfig;
+import it.motta.mbdage.activities.SplashActivity;
+import it.motta.mbdage.database.DBHandler;
+import it.motta.mbdage.dialog.ConfirmDialog;
 
 public class Utils {
 
@@ -70,6 +78,18 @@ public class Utils {
         return bitmap;
     }
 
+    @SuppressLint("SimpleDateFormat")
+    public static String dateQuery(Date date){
+        String strData = "";
+        try{
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            strData = simpleDateFormat.format(date);
+        }catch (Exception exx){
+            exx.printStackTrace();
+        }
+        return strData;
+    }
+
     public static Date getDateLessDay(int day){
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -day);
@@ -92,6 +112,20 @@ public class Utils {
             if(BuildConfig.DEBUG)e.printStackTrace();
             return false;
         }
+    }
+
+
+    public static void logOut(Context context){
+        ConfirmDialog confirmDialog = new ConfirmDialog(((AppCompatActivity)context).getSupportFragmentManager(),"Attenzione","Sei sicuro di disconneterti da questo utente?");
+        confirmDialog.setPositiveClickListner("Conferma",v -> {
+            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+            firebaseAuth.signOut();
+            DBHandler.getIstance(context).deleteUtente();
+            context.startActivity(new Intent(context, SplashActivity.class));
+            ((Activity)context).finish();
+        });
+        confirmDialog.setNegativeClickListner("Annulla",null);
+        confirmDialog.show();
     }
 
 
