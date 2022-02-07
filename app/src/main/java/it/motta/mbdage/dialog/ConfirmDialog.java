@@ -94,18 +94,13 @@ public class ConfirmDialog extends DialogFragment implements View.OnClickListene
         btNegative = dialog.findViewById(R.id.btNegative);
         TextView txtTitle = dialog.findViewById(R.id.txtTitle);
         TextView txtMessage = dialog.findViewById(R.id.txtMessage);
-
         txtMessage.setText(message);
         txtTitle.setText(title);
-
         btPositive.setVisibility(View.INVISIBLE);
-
         if(postiveText.length() > 0)
             setPositiveClickListner(postiveText, positiveHandler,bgPositive);
-
         if(negativeText.length() > 0)
             setNegativeClickListner(negativeText, negativeHandler,bgNegative);
-
         return dialog;
     }
 

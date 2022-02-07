@@ -13,8 +13,8 @@ import java.util.Map;
 public class MakeHttpRequest {
 
     //   public static final String BASE_IP = "http://3.17.164.66/api/";
-   // public static final String BASE_IP = "http://192.168.1.27/mbdage/api/";
-    public static final String BASE_IP = "http://192.168.1.63/mbdage/api/";
+    public static final String BASE_IP = "http://192.168.1.27/mbdage/api/";
+  //  public static final String BASE_IP = "http://192.168.1.63/mbdage/api/";
     public static final String REGISTER = "register.php";
     public static final String REGISTER_TOKEN = "registerToken.php";
     public static final String LOGIN = "login.php";

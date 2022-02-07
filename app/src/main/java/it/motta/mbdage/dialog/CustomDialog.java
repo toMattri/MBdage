@@ -43,7 +43,7 @@ public class CustomDialog extends Dialog {
         super.onCreate(savedInstanceState);
         setCancelable(false);
         setContentView(R.layout.dialog_custom);
-        getWindow().getDecorView().setBackgroundColor(mContext.getResources().getColor(R.color.zxing_transparent,null));
+        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         txtTitle = findViewById(R.id.txtTitle);
         txtMessage = findViewById(R.id.txtMessage);
         llTitle = findViewById(R.id.llTitle);

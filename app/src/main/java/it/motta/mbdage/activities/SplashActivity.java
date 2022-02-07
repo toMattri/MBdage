@@ -120,7 +120,7 @@ public class SplashActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
         if(currentUser == null)
-            startActivity(new Intent(this,LoginActivity.class));
+            startActivity(new Intent(this, LoginActivity.class));
         else {
            Utente utente =  DBHandler.getIstance(this).getUtente();
             if(utente == null){
@@ -136,31 +136,25 @@ public class SplashActivity extends AppCompatActivity {
                         typeLogin = TypeLogin.EMIAL;
 
                 }
-
                 new LoginWorker(this,createUser(currentUser), typeLogin,iAccessOperation).execute();
-
             }else{
                 reloadToken(utente.getId());
                 new LoadVarchiWoker(this,0).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 startActivity(new Intent(this, MainActivity.class));
                 finish();
             }
-
         }
     }
-
 
     @Override
     public void onStart() {
         super.onStart();
         FirebaseApp.initializeApp(this);
-
     }
 
     private Utente createUser(FirebaseUser firebaseUser){
         return new Utente(" ",firebaseUser.getEmail()," ", TypeUtente.NOCOMPLETED,firebaseUser.getUid(),"");
     }
-
 
     private final IAccessOperation iAccessOperation = new IAccessOperation() {
         @Override

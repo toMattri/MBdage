@@ -40,8 +40,7 @@ public class ProgressCDialog extends Dialog implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setCancelable(false);
         setContentView(R.layout.dialog_c_progress);
-        getWindow().getDecorView().setBackgroundColor(mContext.getResources().getColor(R.color.zxing_transparent,null));
-
+        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         txtTitle = findViewById(R.id.titleprog);
         txtMessage = findViewById(R.id.messageprog);
         btProgress = findViewById(R.id.btProg);

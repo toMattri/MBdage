@@ -40,14 +40,16 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
   private TextInputEditText edtDataRegistrati;
   private Utente utente;
 
-  @SuppressLint("ClickableViewAccessibility")
+  @SuppressLint({"ClickableViewAccessibility", "UseCompatLoadingForDrawables"})
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.settings_activity);
     ActionBar actionBar = getSupportActionBar();
-    if (actionBar != null)
+    if (actionBar != null) {
       actionBar.setDisplayHomeAsUpEnabled(true);
+      actionBar.setBackgroundDrawable(getResources().getDrawable(R.color.colorSecondary,null));
+    }
 
     utente = (Utente) getIntent().getSerializableExtra(Parameters.INTENT_UTENTE);
     TextView txtDisplayName = findViewById(R.id.txtDisplayName);
@@ -58,7 +60,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     txtEmail.setText(utente.getEmail());
     if(!StringUtils.isEmpty(utente.getData()) && !utente.getData().equalsIgnoreCase("null")) {
       try {
-       String data = new SimpleDateFormat("dd/MM/yyyy").format(new SimpleDateFormat( "yyyy-MM-dd").parse(utente.getData()));
+        String data = new SimpleDateFormat("dd/MM/yyyy").format(new SimpleDateFormat( "yyyy-MM-dd").parse(utente.getData()));
         edtDataRegistrati.setText((data));
       }catch (Exception exx){
         exx.printStackTrace();

@@ -133,4 +133,22 @@ public class Utils {
         String regex = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])\n";
         return email.matches(regex);
     }
+
+    public static double calculateDist(double lat1,double lat2,double lon2,double lon1){
+        int R = 6371; // Radius of the earth in km
+        double dLat = degrade(lat2-lat1);  // deg2rad below
+        double dLon = degrade(lon2-lon1);
+        double a =
+            Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(degrade(lat1)) * Math.cos(degrade(lat2)) *
+                    Math.sin(dLon/2) * Math.sin(dLon/2)
+            ;
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        double d = R * c; // Distance in km
+        return d;
+    }
+
+    private static double degrade(double t) {
+        return t * (Math.PI/180);
+    }
 }
