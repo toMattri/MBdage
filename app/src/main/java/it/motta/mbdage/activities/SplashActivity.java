@@ -25,15 +25,12 @@ import java.util.Objects;
 
 import it.motta.mbdage.R;
 import it.motta.mbdage.database.DBHandler;
-import it.motta.mbdage.dialog.CustomDialog;
 import it.motta.mbdage.interfaces.IAccessOperation;
-import it.motta.mbdage.message.ResultAccess;
+import it.motta.mbdage.response.ResponseAccess;
 import it.motta.mbdage.models.Utente;
-import it.motta.mbdage.models.evalue.TypeDialog;
 import it.motta.mbdage.models.evalue.TypeLogin;
 import it.motta.mbdage.models.evalue.TypeUtente;
 import it.motta.mbdage.utils.TraduceComunication;
-import it.motta.mbdage.utils.Utils;
 import it.motta.mbdage.worker.LoadVarchiWoker;
 import it.motta.mbdage.worker.LoginWorker;
 import it.motta.mbdage.worker.UpdateTokenWorker;
@@ -162,7 +159,7 @@ public class SplashActivity extends AppCompatActivity {
             try {
                 int result = response.getInt("result");
 
-                switch (ResultAccess.fromValue(result)){
+                switch (ResponseAccess.fromValue(result)){
                     case SUCCESS:
                         Utente utente = TraduceComunication.getUtente(response.getJSONObject("Utente"));
                         reloadToken(utente.getId());

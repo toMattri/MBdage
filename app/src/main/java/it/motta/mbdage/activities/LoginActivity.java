@@ -48,7 +48,7 @@ import it.motta.mbdage.database.DBHandler;
 import it.motta.mbdage.dialog.CustomDialog;
 import it.motta.mbdage.dialog.DateTimePickerDialog;
 import it.motta.mbdage.interfaces.IAccessOperation;
-import it.motta.mbdage.message.ResultAccess;
+import it.motta.mbdage.response.ResponseAccess;
 import it.motta.mbdage.models.Utente;
 import it.motta.mbdage.models.evalue.TypeDialog;
 import it.motta.mbdage.models.evalue.TypeLogin;
@@ -352,7 +352,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             try {
                 int result = response.getInt("result");
                 CustomDialog customDialog;
-                switch (ResultAccess.fromValue(result)){
+                switch (ResponseAccess.fromValue(result)){
                     case SUCCESS:
                         Utente utente = TraduceComunication.getUtente(response.getJSONObject("Utente"));
                         reloadToken(utente.getId());

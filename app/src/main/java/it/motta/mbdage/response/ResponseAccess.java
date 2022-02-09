@@ -1,6 +1,6 @@
-package it.motta.mbdage.message;
+package it.motta.mbdage.response;
 
-public enum ResultAccess {
+public enum ResponseAccess {
 
         SUCCESS(1),
         NOT_CREATED(-1),
@@ -10,13 +10,13 @@ public enum ResultAccess {
         ERROR_ON_UPGRADE(-5);
 
         int value;
-        ResultAccess(int value){
+        ResponseAccess(int value){
                 this.value = value;
         }
 
 
-        public static ResultAccess fromValue(int value){
-                for(ResultAccess res : ResultAccess.values()){
+        public static ResponseAccess fromValue(int value){
+                for(ResponseAccess res : ResponseAccess.values()){
                         if(res.value == value)
                                 return res;
                 }

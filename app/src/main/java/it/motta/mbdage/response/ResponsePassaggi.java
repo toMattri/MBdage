@@ -1,16 +1,16 @@
-package it.motta.mbdage.message;
+package it.motta.mbdage.response;
 
-public enum ResultVarchi {
+public enum ResponsePassaggi {
 
         SUCCESS(1),
         NOT_FIND(0);
         int value;
-        ResultVarchi(int value){
+        ResponsePassaggi(int value){
                 this.value = value;
         }
 
-        public static ResultVarchi fromValue(int value){
-                for(ResultVarchi res : ResultVarchi.values()){
+        public static ResponsePassaggi fromValue(int value){
+                for(ResponsePassaggi res : ResponsePassaggi.values()){
                         if(res.value == value)
                                 return res;
                 }

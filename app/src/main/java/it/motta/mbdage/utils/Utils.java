@@ -19,7 +19,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.math.BigInteger;
 import java.net.InetAddress;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -151,4 +154,23 @@ public class Utils {
     private static double degrade(double t) {
         return t * (Math.PI/180);
     }
+
+    public static String md5Work(String text){
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] messageDigest = md.digest(text.getBytes());
+            BigInteger no = new BigInteger(1, messageDigest);
+
+            StringBuilder hashtext = new StringBuilder(no.toString(16));
+            while (hashtext.length() < 32) {
+                hashtext.insert(0, "0");
+            }
+            return hashtext.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        return "0";
+    }
+
 }

@@ -38,7 +38,7 @@ public class DBHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         try {
-            db.execSQL(LogTable.TABLE);
+
             db.execSQL(PassagiTable.TABLE);
             db.execSQL(UtenteTable.TABLE);
             db.execSQL(VarchiTable.TABLE);
@@ -92,6 +92,28 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
 
+    public ArrayList<Varco> getVarchi(){
+        ArrayList<Varco> varcos = new ArrayList<>();
+        try(Cursor c = getReadableDatabase().rawQuery("Select * FROM " + VarchiTable.TABLE_NAME ,null)) {
+            while(c.moveToNext()){
+                varcos.add(new Varco(c.getLong(c.getColumnIndex(VarchiTable._ID)),c.getDouble(c.getColumnIndex(VarchiTable.CL_LATITUDINE)),
+                    c.getDouble(c.getColumnIndex(VarchiTable.CL_LONGITUDINE)),c.getString(c.getColumnIndex(VarchiTable.CL_DESCRIZIONE)),
+                    c.getString(c.getColumnIndex(VarchiTable.CL_IMAGE))));
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return varcos;
+
+    }
+
+
+    public void completeUtente(Utente utente){
+        ContentValues cv = new ContentValues();
+        cv.put(UtenteTable.CL_TIPO,TypeUtente.COMPLETED.ordinal());
+        getWritableDatabase().update(UtenteTable.TABLE_NAME,cv,UtenteTable._ID +" = ?",new String[]{String.valueOf(utente.getId())});
+        utente.setTipoUtente(TypeUtente.COMPLETED);
+    }
 
     public void writePassaggi(ArrayList<Passaggio> passaggi){
         ArrayList<Integer> mapInt = (ArrayList<Integer>) passaggi.stream().mapToInt(Passaggio::getId).boxed().collect(Collectors.toList());

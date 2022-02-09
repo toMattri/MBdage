@@ -26,7 +26,7 @@ import it.motta.mbdage.database.DBHandler;
 import it.motta.mbdage.dialog.CustomDialog;
 import it.motta.mbdage.dialog.DateTimePickerDialog;
 import it.motta.mbdage.interfaces.IAccessOperation;
-import it.motta.mbdage.message.ResultAccess;
+import it.motta.mbdage.response.ResponseAccess;
 import it.motta.mbdage.models.Utente;
 import it.motta.mbdage.models.evalue.TypeDialog;
 import it.motta.mbdage.models.evalue.TypeLogin;
@@ -125,7 +125,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void OnCompleteOperation(JSONObject response) {
       try {
-        switch (ResultAccess.fromValue(response.getInt("result"))){
+        switch (ResponseAccess.fromValue(response.getInt("result"))){
           case SUCCESS:
             DBHandler.getIstance(SettingsActivity.this).logginUser(utente);
             new CustomDialog(SettingsActivity.this,"Operazione completata","Informazioni aggiornate", TypeDialog.SUCCESS).show();

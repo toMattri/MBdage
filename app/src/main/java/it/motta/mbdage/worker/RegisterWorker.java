@@ -4,13 +4,11 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.android.volley.Response;
-
 import org.json.JSONObject;
 
 import it.motta.mbdage.dialog.ProgressCDialog;
 import it.motta.mbdage.interfaces.IAccessOperation;
-import it.motta.mbdage.message.ResultAccess;
+import it.motta.mbdage.response.ResponseAccess;
 import it.motta.mbdage.models.Utente;
 import it.motta.mbdage.utils.MakeHttpRequest;
 import it.motta.mbdage.utils.TraduceComunication;
@@ -51,7 +49,7 @@ public class RegisterWorker extends AsyncTask<Void,Void,String> {
         MakeHttpRequest.sendPost(mContext,MakeHttpRequest.BASE_IP + MakeHttpRequest.REGISTER, TraduceComunication.traduce(utente, typeLogin), response -> {
             try {
                 JSONObject jsonObject = new JSONObject(response);
-                if(ResultAccess.ALREADY_EXIST.equals(ResultAccess.fromValue(jsonObject.getInt("result")))) {
+                if(ResponseAccess.ALREADY_EXIST.equals(ResponseAccess.fromValue(jsonObject.getInt("result")))) {
                     MakeHttpRequest.sendPost(mContext, MakeHttpRequest.BASE_IP + MakeHttpRequest.LOGIN, TraduceComunication.traduce(utente, typeLogin), responseLogin -> {
                         try {
                             iAccessOperation.OnCompleteOperation(new JSONObject(responseLogin));

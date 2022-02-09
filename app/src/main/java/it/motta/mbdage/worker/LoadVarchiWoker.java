@@ -4,15 +4,10 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.android.volley.Response;
-
 import org.json.JSONObject;
 
 import it.motta.mbdage.database.DBHandler;
-import it.motta.mbdage.dialog.ProgressCDialog;
-import it.motta.mbdage.interfaces.IAccessOperation;
-import it.motta.mbdage.message.ResultVarchi;
-import it.motta.mbdage.models.Utente;
+import it.motta.mbdage.response.ResponsePassaggi;
 import it.motta.mbdage.utils.MakeHttpRequest;
 import it.motta.mbdage.utils.TraduceComunication;
 
@@ -40,7 +35,7 @@ public class LoadVarchiWoker extends AsyncTask<Void,Void,String> {
         MakeHttpRequest.sendPost(mContext, MakeHttpRequest.BASE_IP + MakeHttpRequest.GET_VARCHI, TraduceComunication.traduce(idUtente), response -> {
             try {
                 JSONObject jsonObject = new JSONObject(response);
-                switch (ResultVarchi.fromValue(jsonObject.getInt("result"))){
+                switch (ResponsePassaggi.fromValue(jsonObject.getInt("result"))){
                     case NOT_FIND:
                         break;
                     case SUCCESS:

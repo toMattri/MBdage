@@ -8,7 +8,7 @@ import org.json.JSONObject;
 
 import it.motta.mbdage.database.DBHandler;
 import it.motta.mbdage.interfaces.ILoadPassaggi;
-import it.motta.mbdage.message.ResultVarchi;
+import it.motta.mbdage.response.ResponsePassaggi;
 import it.motta.mbdage.models.filter.FilterPassaggi;
 import it.motta.mbdage.utils.MakeHttpRequest;
 import it.motta.mbdage.utils.TraduceComunication;
@@ -41,7 +41,7 @@ public class LoadPassaggiWorker extends AsyncTask<Void,Void,String> {
             MakeHttpRequest.sendPost(mContext, MakeHttpRequest.BASE_IP + MakeHttpRequest.GET_PASSAGGI,TraduceComunication.traduce(filterPassaggi), response -> {
                 try {
                     JSONObject jsonObject = new JSONObject(response);
-                    switch (ResultVarchi.fromValue(jsonObject.getInt("result"))) {
+                    switch (ResponsePassaggi.fromValue(jsonObject.getInt("result"))) {
                         case NOT_FIND:
                             if(iLoadPassaggi != null)
                                 iLoadPassaggi.OnCompleteWithout();

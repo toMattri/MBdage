@@ -20,6 +20,8 @@ public class MakeHttpRequest {
     public static final String LOGIN = "login.php";
     public static final String GET_VARCHI = "varchi.php";
     public static final String GET_PASSAGGI = "passaggi.php";
+    public static final String OPEN_VARCO = "openVarco.php";
+    public static final String CREA_VARCO = "creaVarco.php";
 
 
     public static void sendPost(Context mContext, String url, Map<String, String> sendParams, Response.Listener<String> response, Response.ErrorListener errorListener) {

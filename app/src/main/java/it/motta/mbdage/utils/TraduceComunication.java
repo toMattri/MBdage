@@ -5,6 +5,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,9 +68,18 @@ public class TraduceComunication {
             ex.printStackTrace();
             return new ArrayList<>();
         }
-
     }
 
+    public static Map<String,String> traduce(Varco varco)  {
+        Map<String,String> request = new HashMap<>();
+        request.put("descrizione",varco.getDescrizione());
+        if(!StringUtils.isEmpty(varco.getImg()))
+            request.put("url_image",varco.getImg());
+
+        request.put("longitudine",String.valueOf(varco.getLongitudine()));
+        request.put("latitudine",String.valueOf(varco.getLatitudine()));
+        return request;
+    }
 
 
     public static Map<String,String> traduce(Utente utente,String typeLogin)  {
@@ -126,6 +137,15 @@ public class TraduceComunication {
             request.put(PAGER, String.valueOf(filterPassaggi.getPager()));
 
         }
+        return request;
+    }
+
+
+    public static Map<String,String> traduce(Utente utente,Varco varco){
+        Map<String,String> request = new HashMap<>();
+        String token = utente.getId() + ";" + varco.getId() + ";" + Calendar.getInstance().getTimeInMillis();
+        String encodedString = Base64.getEncoder().encodeToString(token.getBytes());
+        request.put("token",encodedString);
         return request;
     }
 
