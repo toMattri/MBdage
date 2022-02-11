@@ -105,11 +105,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 if (dy > 0) {
-                    Log.e("test", "reached the last element of recyclerview");
                     int visibleItemCount = linearLayoutManager.getChildCount();
                     int totalItemCount = linearLayoutManager.getItemCount();
                     int pastVisiblesItems = linearLayoutManager.findFirstVisibleItemPosition();
-
                     if (loading) {
                         if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
                             onLoadMore();
@@ -156,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.btImpostazioni:
                 PopupMenu menu = new PopupMenu(this, view);
-                menu.getMenu().add("Impostazioni").setNumericShortcut('0');
+                menu.getMenu().add(getResources().getString(R.string.settingsActivity)).setNumericShortcut('0');
                 menu.getMenu().add("Logout").setNumericShortcut('1');
                 menu.setOnMenuItemClickListener(item -> {
                     switch (item.getNumericShortcut()) {
@@ -230,10 +228,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (result.getContents() == null) {
             Intent originalIntent = result.getOriginalIntent();
             if (originalIntent == null) {
-                Log.d("MainActivity", "Cancelled scan");
+
                 Toast.makeText(MainActivity.this, "Cancelled", Toast.LENGTH_LONG).show();
             } else if (originalIntent.hasExtra(Intents.Scan.MISSING_CAMERA_PERMISSION)) {
-                Log.d("MainActivity", "Cancelled scan due to missing camera permission");
                 Toast.makeText(MainActivity.this, "Cancelled due to missing camera permission", Toast.LENGTH_LONG).show();
             }
         } else {

@@ -2,16 +2,43 @@
     <string name="app_name">MBdage</string>
     <string name="gooogle_map_api_key">AIzaSyDN0FGXwDDuOlnpT6LuExFxlfd2GoKozC8</string>
 
-
-
     <string name="settingsActivity">Impostazioni</string>
-
-
     <string name="setting_utente">Utente</string>
     <string name="setting_salva">Salva</string>
     <string name="no_complete_utente">Conferma il tuo utente con il primo accesso ad un varco!</string>
 
     <string name="hint_data">Data</string>
-    <string name="title_activity_maps">MapsActivity</string>
+    <string name="data_nascita">Data di nascita</string>
+
+    <string name="attenzione">Attenzione</string>
+    <string name="successo">Operazione completata</string>
+    <string name="no_utente">Non è stato trovato nessun utente con i dati inseriti</string>
+    <string name="presente_utente">Utente già presente!</string>
+
+    <string name="err_nome">Inserire un nome valido</string>
+    <string name="err_cognome">Inserire un cognome valido</string>
+    <string name="err_email">Inserire una email valida</string>
+    <string name="err_password">Inserire una password valida</string>
+    <string name="err_dats">Si prega di inserire una data!</string>
+
+    <string name="errore">Errore</string>
+    <string name="err_generico">Si è verifificato un errore!</string>
+    <string name="err_server">Si è verificato un errore durante la comunicazione con il server</string>
+    <string name="err_param">Si è verificato un errore nel passaggio dei parametri!</string>
+    <string name="err_update_param">Si è verificato un errore durante l\'aggiornamento dei parametri!</string>
+    <string name="info_aggiorn">Informazioni aggiornate</string>
+    <string name="err_new_utente">Si è verificato un errore durante la creazione dell'utente!</string>
+
+    <string name="registraticon">Registrati ora…</string>
+    <string name="oppurecon">Oppure continua con…</string>
+    <string name="accedicon">Accedi…</string>
+
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="accedi">Accedi</string>
+    <string name="registrati">Registrati</string>
+    <string name="cognome">Cognome</string>
+    <string name="nome">Nome</string>
+
 
 </resources>

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -48,11 +47,11 @@ import it.motta.mbdage.database.DBHandler;
 import it.motta.mbdage.dialog.CustomDialog;
 import it.motta.mbdage.dialog.DateTimePickerDialog;
 import it.motta.mbdage.interfaces.IAccessOperation;
-import it.motta.mbdage.response.ResponseAccess;
 import it.motta.mbdage.models.Utente;
 import it.motta.mbdage.models.evalue.TypeDialog;
 import it.motta.mbdage.models.evalue.TypeLogin;
 import it.motta.mbdage.models.evalue.TypeUtente;
+import it.motta.mbdage.response.ResponseAccess;
 import it.motta.mbdage.utils.TraduceComunication;
 import it.motta.mbdage.utils.Utils;
 import it.motta.mbdage.worker.LoadVarchiWoker;
@@ -60,7 +59,7 @@ import it.motta.mbdage.worker.LoginWorker;
 import it.motta.mbdage.worker.RegisterWorker;
 import it.motta.mbdage.worker.UpdateTokenWorker;
 
-@SuppressLint({"ResourceType","ClickableViewAccessibility","NonConstantResourceId"})
+@SuppressLint({"ResourceType","ClickableViewAccessibility","NonConstantResourceId","SimpleDateFormat"})
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int RC_SIGN_IN = 9001;
@@ -141,11 +140,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    @SuppressLint("SimpleDateFormat")
     private void saveDataRegistrazione(TextInputEditText edt) {
         try {
             Date date = Objects.requireNonNull(edt.getText()).toString().length() == 0 ? Utils.getFirstDayOfYear(20) : new SimpleDateFormat("dd/MM/yyyy").parse(edt.getText().toString());
-            DateTimePickerDialog dateTimePickerDialog = new DateTimePickerDialog(this, "Data di nascita", date);
+            DateTimePickerDialog dateTimePickerDialog = new DateTimePickerDialog(this, getResources().getString(R.string.data_nascita), date);
             dateTimePickerDialog.setOnDismissListener(dialog -> {
                 if (dateTimePickerDialog.getDateChoosed() != null)
                     edt.setText(new SimpleDateFormat("dd/MM/yyyy").format(dateTimePickerDialog.getDateChoosed()));
@@ -181,14 +179,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void signInGitHub(){
         mAuth.startActivityForSignInWithProvider(this, provider.build())
-            .addOnSuccessListener(authResult -> {
-                Log.e("RES" , authResult.getUser().getEmail());
-                new RegisterWorker(this,createUserWithImage(authResult.getUser(),""),TypeLogin.GIT,iAccessOperation).execute();
-            })
-            .addOnFailureListener(e -> {
-                e.printStackTrace();
-                new CustomDialog(this,"Attenzione","Non è stato trovato nessun utente con i dati inseriti", TypeDialog.WARING).show();
-            });
+                .addOnSuccessListener(authResult -> {
+                    new RegisterWorker(this,createUserWithImage(authResult.getUser(),""),TypeLogin.GIT,iAccessOperation).execute();
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                    new CustomDialog(this,getResources().getString(R.string.attenzione),getResources().getString(R.string.no_utente),TypeDialog.WARING).show();
+                });
     }
 
     @Override
@@ -198,11 +195,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                Log.d("TAG", "firebaseAuthWithGoogle:" + account.getId());
                 firebaseAuthWithGoogle(account.getIdToken(),account.getPhotoUrl().toString());
             } catch (ApiException e) {
-                new CustomDialog(this,"Attenzione","Non è stato trovato nessun utente con i dati inseriti", TypeDialog.WARING).show();
-                Log.w("TAG", "Google sign in failed", e);
+                new CustomDialog(this,getResources().getString(R.string.attenzione),getResources().getString(R.string.no_utente), TypeDialog.WARING).show();
             }
         }
     }
@@ -211,17 +206,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential).addOnCompleteListener(this, task -> {
             if (task.isSuccessful()) {
-                Log.d("TAG", "signInWithCredential:success");
                 FirebaseUser user = mAuth.getCurrentUser();
                 new RegisterWorker(this,createUserWithImage(user,urlImage),TypeLogin.GOOGLE,iAccessOperation).execute();
             } else {
-                Log.w("TAG", "signInWithCredential:failure", task.getException());
-                new CustomDialog(this, "Attenzione", "Non è stato trovato nessun utente con i dati inseriti", TypeDialog.WARING).show();
+                new CustomDialog(this,getResources().getString(R.string.attenzione),getResources().getString(R.string.no_utente), TypeDialog.WARING).show();
             }
         });
     }
 
-    @SuppressLint("SimpleDateFormat")
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -250,15 +242,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
 
                 if (edtNomeRegistrati.getText().toString().length() == 0 || edtNomeRegistrati.getText().toString().length() > 20) {
-                    edtNomeRegistrati.setError("Inserire un nome valido");
+                    edtNomeRegistrati.setError(getResources().getString(R.string.err_nome));
                     blRegistrati = false;
                 }
                 if (edtCognomeRegistrati.getText().toString().length() == 0 || edtCognomeRegistrati.getText().toString().length() > 20) {
-                    edtCognomeRegistrati.setError("Inserire un cognome valido");
+                    edtCognomeRegistrati.setError(getResources().getString(R.string.err_cognome));
                     blRegistrati = false;
                 }
                 if (edtEmailRegistrati.getText().toString().length() == 0 || Utils.valideEmail(edtEmailRegistrati.getText().toString())) {
-                    edtEmailRegistrati.setError("Inserire una email valida");
+                    edtEmailRegistrati.setError(getResources().getString(R.string.err_email));
                     blRegistrati = false;
                 }
 
@@ -266,19 +258,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     blRegistrati = false;
                     TextInputLayout textInputLayout = (TextInputLayout) findViewById(edtPasswordRegistrati.getId()).getParent().getParent();
                     textInputLayout.setEndIconVisible(false);
-                    edtPasswordRegistrati.setError("Inserire una password valida");
+                    edtPasswordRegistrati.setError(getResources().getString(R.string.err_password));
                 }
 
                 String data = edtDataRegistrati.getText().toString() ;
                 if(StringUtils.isEmpty(data)) {
-                    new CustomDialog(this, "Attenzione", "Si prega di inserire una data!", TypeDialog.WARING).show();
+                    new CustomDialog(this, getResources().getString(R.string.attenzione), getResources().getString(R.string.err_dats), TypeDialog.WARING).show();
                     return;
                 }
                 try{
                     data = new SimpleDateFormat("yyyy-MM-dd").format(new SimpleDateFormat("dd/MM/yyyy").parse(data));
                 }catch (Exception ex){
                     ex.printStackTrace();
-                    new CustomDialog(this,"Errore","Si è verificato un errore", TypeDialog.ERROR).show();
+                    new CustomDialog(this,getResources().getString(R.string.errore),getResources().getString(R.string.err_generico), TypeDialog.ERROR).show();
                     blRegistrati = false;
                 }
 
@@ -286,19 +278,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                 String finalData = data;
                 mAuth.createUserWithEmailAndPassword(edtEmailRegistrati.getText().toString().trim(),edtPasswordRegistrati.getText().toString().trim())
-                    .addOnCompleteListener(this, task -> {
-                        if (task.isSuccessful()) {
-                            Log.d("TAG", "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            new RegisterWorker(this,createUser(user,edtCognomeRegistrati.getText().toString() + " " + edtNomeRegistrati.getText().toString(), finalData),TypeLogin.EMIAL,iAccessOperation).execute();
-                        } else
-                            new CustomDialog(this,"Attenzione","Utente già presente!", TypeDialog.WARING).show();
-                    });
+                        .addOnCompleteListener(this, task -> {
+                            if (task.isSuccessful()) {
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                new RegisterWorker(this,createUser(user,edtCognomeRegistrati.getText().toString() + " " + edtNomeRegistrati.getText().toString(), finalData),TypeLogin.EMIAL,iAccessOperation).execute();
+                            } else
+                                new CustomDialog(this,getResources().getString(R.string.attenzione),getResources().getString(R.string.presente_utente), TypeDialog.WARING).show();
+                        });
                 break;
             case R.id.btAccedi:
                 boolean blAccedi = true;
                 if (edtEmailAccedi.getText().toString().length() == 0 || Utils.valideEmail(edtEmailAccedi.getText().toString())) {
-                    edtEmailAccedi.setError("Inserire una email valida");
+                    edtEmailAccedi.setError(getResources().getString(R.string.err_email));
                     blAccedi = false;
                 }
 
@@ -306,22 +297,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     blAccedi = false;
                     TextInputLayout textInputLayout = (TextInputLayout) findViewById(edtPasswordAccedi.getId()).getParent().getParent();
                     textInputLayout.setEndIconVisible(false);
-                    edtPasswordAccedi.setError("Inserire una password valida");
+                    edtPasswordAccedi.setError(getResources().getString(R.string.err_password));
                 }
 
                 if (!blAccedi) return;
 
                 mAuth.signInWithEmailAndPassword(edtEmailAccedi.getText().toString(), edtPasswordAccedi.getText().toString())
-                    .addOnCompleteListener(this, task -> {
-                        if (task.isSuccessful()) {
-                            Log.d("TAG", "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            new LoginWorker(this,createUserWithImage(user,""), TypeLogin.EMIAL,iAccessOperation).execute();
-                        } else {
-                            new CustomDialog(this,"Attenzione","Non è stato trovato nessun utente con i dati inseriti", TypeDialog.WARING).show();
-                            Log.w("TAG", "signInWithEmail:failure", task.getException());
-                        }
-                    });
+                        .addOnCompleteListener(this, task -> {
+                            if (task.isSuccessful()) {
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                new LoginWorker(this,createUserWithImage(user,""), TypeLogin.EMIAL,iAccessOperation).execute();
+                            } else {
+                                new CustomDialog(this,getResources().getString(R.string.attenzione),getResources().getString(R.string.no_utente), TypeDialog.WARING).show();
+                            }
+                        });
                 break;
             case R.id.signInGoogle:
                 signInGoogle();
@@ -362,21 +351,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         finish();
                         break;
                     case ERR_PARAM:
-                        customDialog = new CustomDialog(LoginActivity.this,"Errore","Errore nell'inserimento dei parametri di accesso", TypeDialog.ERROR);
+                        customDialog = new CustomDialog(LoginActivity.this,getResources().getString(R.string.errore),getResources().getString(R.string.err_param), TypeDialog.ERROR);
                         customDialog.show();
                         break;
                     case NOT_CREATED:
-                        customDialog = new CustomDialog(LoginActivity.this,"Errore","Si è verificato un errore durante la creazione dell'utente!", TypeDialog.ERROR);
+                        customDialog = new CustomDialog(LoginActivity.this,getResources().getString(R.string.errore),getResources().getString(R.string.err_new_utente), TypeDialog.ERROR);
                         customDialog.show();
                         break;
                     case NOT_FIND:
-                        customDialog = new CustomDialog(LoginActivity.this,"Attenzione","Non è stato trovato nessun utente con i dati inseriti", TypeDialog.WARING);
+                        customDialog = new CustomDialog(LoginActivity.this,getResources().getString(R.string.attenzione),getResources().getString(R.string.no_utente), TypeDialog.WARING);
                         customDialog.show();
                         break;
                 }
             }catch (Exception ex){
                 ex.printStackTrace();
-                CustomDialog customDialog = new CustomDialog(LoginActivity.this,"Attenzione","Si è verificato un errore", TypeDialog.WARING);
+                CustomDialog customDialog = new CustomDialog(LoginActivity.this,getResources().getString(R.string.attenzione),"Si è verificato un errore", TypeDialog.WARING);
                 customDialog.show();
             }
 
@@ -384,7 +373,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         @Override
         public void OnError() {
-            CustomDialog customDialog = new CustomDialog(LoginActivity.this,"Errore","Errore durante la comunicazione con il server!", TypeDialog.ERROR);
+            CustomDialog customDialog = new CustomDialog(LoginActivity.this,getResources().getString(R.string.errore),"Errore durante la comunicazione con il server!", TypeDialog.ERROR);
             customDialog.show();
         }
 
@@ -392,10 +381,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void reloadToken(int idUtente){
         mMessaging.getToken().addOnCompleteListener(task -> {
-            if (!task.isSuccessful()) {
-                Log.e("TAG", "Fetching FCM registration token failed", task.getException());
+            if (!task.isSuccessful())
                 return;
-            }
 
             String token = task.getResult();
             new UpdateTokenWorker(this,idUtente,token).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

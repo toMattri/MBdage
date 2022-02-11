@@ -43,7 +43,8 @@
                 android:layout_margin="15dp"
                 android:elevation="10dp"
                 android:visibility="gone"
-                app:cardCornerRadius="8dp">
+                app:cardCornerRadius="8dp"
+                tools:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -61,7 +62,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="0"
-                        android:hint="Nome"
+                        android:hint="@string/nome"
                         app:counterEnabled="true"
                         app:counterMaxLength="20"
                         app:endIconMode="clear_text">
@@ -79,7 +80,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="0"
-                        android:hint="Cognome"
+                        android:hint="@string/cognome"
                         app:counterEnabled="true"
                         app:counterMaxLength="20"
                         app:endIconMode="clear_text">
@@ -97,7 +98,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="0"
-                        android:hint="Email"
+                        android:hint="@string/email"
                         app:endIconMode="clear_text">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -113,7 +114,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="0"
-                        android:hint="Password"
+                        android:hint="@string/password"
                         app:counterEnabled="true"
                         app:counterMaxLength="20"
                         app:endIconMode="password_toggle">
@@ -132,7 +133,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="0"
-                        android:hint="Data"
+                        android:hint="@string/hint_data"
                         app:endIconMode="clear_text">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -157,7 +158,7 @@
                             android:paddingTop="6dp"
                             android:paddingEnd="7dp"
                             android:paddingBottom="6dp"
-                            android:text="Registrati"
+                            android:text="@string/registrati"
                             android:textColor="@color/white"
                             android:textStyle="bold" />
 
@@ -169,7 +170,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Accedi..."
+                        android:text="@string/accedicon"
                         android:textColor="@color/colorPrimaryDark"
                         android:textStyle="bold" />
 
@@ -201,7 +202,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Email"
+                        android:hint="@string/email"
                         app:endIconMode="clear_text">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -216,7 +217,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Password"
+                        android:hint="@string/password"
                         app:counterEnabled="true"
                         app:counterMaxLength="20"
                         app:endIconMode="password_toggle">
@@ -240,7 +241,7 @@
                             android:id="@+id/btAccedi"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Accedi"
+                            android:text="@string/accedi"
                             android:textStyle="bold" />
 
 
@@ -251,7 +252,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Registrati ora..."
+                        android:text="@string/registraticon"
                         android:textColor="@color/colorPrimaryDark"
                         android:textStyle="bold" />
 

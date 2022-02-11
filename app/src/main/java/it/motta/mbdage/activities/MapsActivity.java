@@ -91,7 +91,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
       });
 
     } catch (SecurityException e)  {
-      Log.e("Exception: %s", e.getMessage(), e);
+     e.printStackTrace();
     }
   }
 

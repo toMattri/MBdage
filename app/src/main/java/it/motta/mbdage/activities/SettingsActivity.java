@@ -26,21 +26,21 @@ import it.motta.mbdage.database.DBHandler;
 import it.motta.mbdage.dialog.CustomDialog;
 import it.motta.mbdage.dialog.DateTimePickerDialog;
 import it.motta.mbdage.interfaces.IAccessOperation;
-import it.motta.mbdage.response.ResponseAccess;
 import it.motta.mbdage.models.Utente;
 import it.motta.mbdage.models.evalue.TypeDialog;
 import it.motta.mbdage.models.evalue.TypeLogin;
 import it.motta.mbdage.models.evalue.TypeUtente;
+import it.motta.mbdage.response.ResponseAccess;
 import it.motta.mbdage.utils.Parameters;
 import it.motta.mbdage.utils.Utils;
 import it.motta.mbdage.worker.RegisterWorker;
 
+@SuppressLint({"SimpleDateFormat", "NonConstantResourceId","ClickableViewAccessibility", "UseCompatLoadingForDrawables"})
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener {
 
   private TextInputEditText edtDataRegistrati;
   private Utente utente;
 
-  @SuppressLint({"ClickableViewAccessibility", "UseCompatLoadingForDrawables"})
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -92,14 +92,13 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     btLogOut.setOnClickListener(this);
   }
 
-  @SuppressLint({"SimpleDateFormat", "NonConstantResourceId"})
   @Override
   public void onClick(View view) {
     switch (view.getId()){
       case R.id.btSave:
         String data =edtDataRegistrati.getText().toString() ;
         if(StringUtils.isEmpty(data)) {
-          new CustomDialog(this, "Attenzione", "Si prega di inserire una data!", TypeDialog.WARING).show();
+          new CustomDialog(this, getResources().getString(R.string.attenzione), getResources().getString(R.string.err_dats), TypeDialog.WARING).show();
           return;
         }
         try{
@@ -107,18 +106,15 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
           utente.setData(data);
         }catch (Exception ex){
           ex.printStackTrace();
-          new CustomDialog(this,"Errore","Si è verificato un errore", TypeDialog.ERROR).show();
+          new CustomDialog(this, getResources().getString(R.string.errore), getResources().getString(R.string.err_generico), TypeDialog.ERROR).show();
           return;
         }
-
         new RegisterWorker(this,utente, TypeLogin.EMIAL,iAccessOperation).execute();
-
         break;
       case R.id.btLogOut:
         Utils.logOut(this);
         break;
     }
-
   }
 
   private final IAccessOperation iAccessOperation = new IAccessOperation() {
@@ -128,31 +124,24 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         switch (ResponseAccess.fromValue(response.getInt("result"))){
           case SUCCESS:
             DBHandler.getIstance(SettingsActivity.this).logginUser(utente);
-            new CustomDialog(SettingsActivity.this,"Operazione completata","Informazioni aggiornate", TypeDialog.SUCCESS).show();
+            new CustomDialog(SettingsActivity.this,getResources().getString(R.string.successo),getResources().getString(R.string.info_aggiorn), TypeDialog.SUCCESS).show();
             break;
           case ERROR_ON_UPGRADE:
-            new CustomDialog(SettingsActivity.this,"Errore ","Si è verificato un errore durante l'aggiornamento dei parametri!", TypeDialog.WARING).show();
+            new CustomDialog(SettingsActivity.this,getResources().getString(R.string.errore),getResources().getString(R.string.err_update_param), TypeDialog.WARING).show();
             break;
           case ERR_PARAM:
-            new CustomDialog(SettingsActivity.this,"Errore ","Si è verificato un errore nel passaggio dei parametri!", TypeDialog.WARING).show();
-
+            new CustomDialog(SettingsActivity.this,getResources().getString(R.string.errore),getResources().getString(R.string.err_param), TypeDialog.WARING).show();
         }
-
       }catch (Exception ex){
         ex.printStackTrace();
-        new CustomDialog(SettingsActivity.this,"Errore","Si è verificato un errore", TypeDialog.ERROR).show();
+        new CustomDialog(SettingsActivity.this,getResources().getString(R.string.errore),getResources().getString(R.string.err_generico), TypeDialog.ERROR).show();
       }
     }
-
     @Override
     public void OnError() {
-      new CustomDialog(SettingsActivity.this,"Errore ","Si è verificato un errore durante la comunicazione con il server", TypeDialog.WARING).show();
+      new CustomDialog(SettingsActivity.this,getResources().getString(R.string.errore),getResources().getString(R.string.err_server), TypeDialog.WARING).show();
     }
   };
-
-
-
-
 
   @Override
   public boolean onSupportNavigateUp() {
@@ -160,11 +149,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     return true;
   }
 
-  @SuppressLint("SimpleDateFormat")
   private void saveDataRegistrazione(TextInputEditText edt) {
     try {
       Date date = Objects.requireNonNull(edt.getText()).toString().length() == 0 ? Utils.getFirstDayOfYear(20) : new SimpleDateFormat("dd/MM/yyyy").parse(edt.getText().toString());
-      DateTimePickerDialog dateTimePickerDialog = new DateTimePickerDialog(this, "Data di nascita", date);
+      DateTimePickerDialog dateTimePickerDialog = new DateTimePickerDialog(this, getResources().getString(R.string.data_nascita), date);
       dateTimePickerDialog.setOnDismissListener(dialog -> {
         if (dateTimePickerDialog.getDateChoosed() != null)
           edt.setText(new SimpleDateFormat("dd/MM/yyyy").format(dateTimePickerDialog.getDateChoosed()));
@@ -175,6 +163,5 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         e.printStackTrace();
     }
   }
-
 
 }
