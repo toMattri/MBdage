@@ -12,10 +12,6 @@ import com.google.firebase.storage.UploadTask;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 
 import it.motta.mbdage.dialog.ProgressCDialog;
 import it.motta.mbdage.interfaces.ICreateVarco;
@@ -67,8 +63,6 @@ public class CreaVarcoWorker extends AsyncTask<Void,Void,String> {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             img.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             byte[] data = baos.toByteArray();
-
-
             UploadTask uploadTask = image.putBytes(data);
             uploadTask.addOnFailureListener(exception -> {
                 iCreateVarco.ErroOnLoadImageg();
@@ -76,9 +70,8 @@ public class CreaVarcoWorker extends AsyncTask<Void,Void,String> {
                 varco.setImg(image.getPath());
                 loadVarco();
             });
-        }else{
+        }else
             loadVarco();
-        }
         return null;
     }
 
@@ -88,7 +81,8 @@ public class CreaVarcoWorker extends AsyncTask<Void,Void,String> {
                 JSONObject jsonObject = new JSONObject(response);
                 switch (ResponseCreaVarco.fromValue(jsonObject.getInt("result"))) {
                     case SUCCESS:
-                        iCreateVarco.OnSuccess();
+                        varco.setId(jsonObject.getInt("id"));
+                        iCreateVarco.OnSuccess(varco);
                         break;
                     case ERROR:
                         iCreateVarco.ErroGeneric();
@@ -96,6 +90,8 @@ public class CreaVarcoWorker extends AsyncTask<Void,Void,String> {
                     case ERR_PARAM:
                         iCreateVarco.ErrorParam();
                         break;
+                    case ALREADY:
+                        iCreateVarco.AlreadyCreated();
                 }
                 closeLogging();
             } catch (Exception exception) {

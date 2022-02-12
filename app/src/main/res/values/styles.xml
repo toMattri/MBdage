@@ -34,4 +34,9 @@
         <item name="android:windowExitAnimation">@anim/pushdown</item>
     </style>
 
+    <style name="Animation.showDialog.Varco">
+        <item name="android:windowEnterAnimation">@anim/grow_from_topright_to_bottomleft</item>
+        <item name="android:windowExitAnimation">@anim/pushdown</item>
+    </style>
+
 </resources>

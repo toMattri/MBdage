@@ -58,7 +58,6 @@ public class ConfirmDialog extends DialogFragment implements View.OnClickListene
         }
     }
 
-
     public void setNegativeClickListner(String message,View.OnClickListener handler){
         setNegativeClickListner(message, handler, -1);
     }

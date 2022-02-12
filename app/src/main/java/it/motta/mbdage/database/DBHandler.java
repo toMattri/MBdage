@@ -125,7 +125,7 @@ public class DBHandler extends SQLiteOpenHelper {
             cv.put(PassagiTable._ID, pas.getId());
             cv.put(PassagiTable.CL_ID_VARCO, pas.getIdVarco());
             cv.put(PassagiTable.CL_DATA, pas.getData());
-            getWritableDatabase().insertOrThrow(PassagiTable.TABLE_NAME, null, cv);
+            getWritableDatabase().insertWithOnConflict(PassagiTable.TABLE_NAME, null, cv,SQLiteDatabase.CONFLICT_REPLACE);
         }
     }
 

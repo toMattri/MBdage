@@ -33,7 +33,6 @@ public class DateTimePickerDialog extends Dialog {
         this.dateToSet = dateToSet;
     }
 
-
     public DateTimePickerDialog(@NonNull Context context,String title) {
         this(context,title,new Date());
     }

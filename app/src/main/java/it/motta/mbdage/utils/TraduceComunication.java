@@ -73,8 +73,7 @@ public class TraduceComunication {
     public static Map<String,String> traduce(Varco varco)  {
         Map<String,String> request = new HashMap<>();
         request.put("descrizione",varco.getDescrizione());
-        if(!StringUtils.isEmpty(varco.getImg()))
-            request.put("url_image",varco.getImg());
+        request.put("url_image",varco.getImg());
 
         request.put("longitudine",String.valueOf(varco.getLongitudine()));
         request.put("latitudine",String.valueOf(varco.getLatitudine()));

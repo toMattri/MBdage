@@ -3,7 +3,6 @@ package it.motta.mbdage.activities;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,81 +16,121 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-
-import java.util.ArrayList;
 
 import it.motta.mbdage.R;
 import it.motta.mbdage.database.DBHandler;
 import it.motta.mbdage.dialog.CreaVarcoDialog;
+import it.motta.mbdage.dialog.CustomDialog;
+import it.motta.mbdage.dialog.VarcoFrameDialog;
+import it.motta.mbdage.interfaces.ICreateVarco;
+import it.motta.mbdage.interfaces.ILoadVarchi;
+import it.motta.mbdage.models.Utente;
 import it.motta.mbdage.models.Varco;
+import it.motta.mbdage.utils.Parameters;
+import it.motta.mbdage.worker.LoadVarchiWoker;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
 
   private GoogleMap mMap;
   private CreaVarcoDialog creaVarcoDialog;
+  private Utente utente;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_maps);
-
-    // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-    SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-        .findFragmentById(R.id.map);
+    SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
     mapFragment.getMapAsync(this);
+    utente = (Utente) getIntent().getSerializableExtra(Parameters.INTENT_UTENTE);
+
   }
 
-  /**
-   * Manipulates the map once available.
-   * This callback is triggered when the map is ready to be used.
-   * This is where we can add markers or lines, add listeners or move the camera. In this case,
-   * we just add a marker near Sydney, Australia.
-   * If Google Play services is not installed on the device, the user will be prompted to install
-   * it inside the SupportMapFragment. This method will only be triggered once the user has
-   * installed Google Play services and returned to the app.
-   */
   @Override
   public void onMapReady(GoogleMap googleMap) {
     mMap = googleMap;
     mMap.setOnMapLongClickListener(this);
-    for(Varco varco: DBHandler.getIstance(MapsActivity.this).getVarchi()) {
-      mMap.addMarker(new MarkerOptions().position(new LatLng(varco.getLatitudine(),varco.getLongitudine())).title(varco.getDescrizione()));
-    }
+    mMap.setOnMarkerClickListener(  marker ->{
+      Varco varco = (Varco) marker.getTag();
+      VarcoFrameDialog varcoFrameDialog = new VarcoFrameDialog(getSupportFragmentManager(),varco);
+      varcoFrameDialog.show();
+      return true;
+    });
 
+    reloadMap();
+  }
+
+  private void reloadMap(){
+    for(Varco varco: DBHandler.getIstance(MapsActivity.this).getVarchi()) {
+      mMap.addMarker(new MarkerOptions().position(new LatLng(varco.getLatitudine(),varco.getLongitudine())).title(varco.getDescrizione())).setTag(varco);
+    }
     getDeviceLocation();
   }
 
+  private final ICreateVarco iCreateVarco = new ICreateVarco() {
+    @Override
+    public void OnSuccess(Varco varco) {
+      VarcoFrameDialog varcoFrameDialog = new VarcoFrameDialog(getSupportFragmentManager(),varco);
+      varcoFrameDialog.show();
+      new LoadVarchiWoker(MapsActivity.this, 0, new ILoadVarchi() {
+        @Override
+        public void OnSuccess() {
+          reloadMap();
+        }
+
+        @Override
+        public void ErroGeneric() {
+          new CustomDialog(MapsActivity.this,getResources().getString(R.string.errore),getResources().getString(R.string.err_load_varchi)).show();
+        }
+      }).execute();
+    }
+
+    @Override
+    public void ErrorParam() {
+      new CustomDialog(MapsActivity.this,getResources().getString(R.string.errore),getResources().getString(R.string.err_param)).show();
+    }
+
+    @Override
+    public void ErroGeneric() {
+      new CustomDialog(MapsActivity.this,getResources().getString(R.string.errore),getResources().getString(R.string.err_generico)).show();
+    }
+
+    @Override
+    public void ErrorConnection() {
+      new CustomDialog(MapsActivity.this,getResources().getString(R.string.errore),getResources().getString(R.string.err_server)).show();
+    }
+
+    @Override
+    public void ErroOnLoadImageg() {
+      new CustomDialog(MapsActivity.this,getResources().getString(R.string.errore),getResources().getString(R.string.err_load_img_varco)).show();
+    }
+
+    @Override
+    public void AlreadyCreated() {
+      new CustomDialog(MapsActivity.this,getResources().getString(R.string.errore),getResources().getString(R.string.err_already_varco)).show();
+    }
+  };
+
   private void getDeviceLocation() {
-    /*
-     * Get the best and most recent location of the device, which may be null in rare
-     * cases when a location is not available.
-     */
     try {
+      mMap.setMyLocationEnabled(true);
       FusedLocationProviderClient fusedLocationClient;
       fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
       Task<Location> locationResult = fusedLocationClient.getLastLocation();
-      locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
-        @Override
-        public void onComplete(@NonNull Task<Location> task) {
-          if (task.isSuccessful()) {
-            Location lastKnownLocation;
-            // Set the map's camera position to the current location of the device.
-            lastKnownLocation = task.getResult();
-            if (lastKnownLocation != null) {
-              mMap.addMarker(new MarkerOptions().position(new LatLng(lastKnownLocation.getLatitude(),
-                  lastKnownLocation.getLongitude())).title("Tu"));
-
-              mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                  new LatLng(lastKnownLocation.getLatitude(),
-                      lastKnownLocation.getLongitude()),50));
-            }
+      locationResult.addOnCompleteListener(this, task -> {
+        if (task.isSuccessful()) {
+          Location lastKnownLocation;
+          // Set the map's camera position to the current location of the device.
+          lastKnownLocation = task.getResult();
+          if (lastKnownLocation != null) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                new LatLng(lastKnownLocation.getLatitude(),
+                    lastKnownLocation.getLongitude()),50));
           }
         }
       });
-
     } catch (SecurityException e)  {
-     e.printStackTrace();
+      e.printStackTrace();
     }
   }
 
@@ -104,10 +143,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
   @Override
   public void onMapLongClick(@NonNull LatLng latLng) {
-
-    creaVarcoDialog = new CreaVarcoDialog(this,latLng);
+    creaVarcoDialog = new CreaVarcoDialog(this,latLng,iCreateVarco);
     creaVarcoDialog.show();
-
   }
 
 }

@@ -111,15 +111,6 @@
                 android:scaleType="centerCrop"
                 app:srcCompat="@drawable/ic_qr" />
 
-            <ImageButton
-                android:id="@+id/btNfc"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_marginHorizontal="10dp"
-                android:layout_weight="0"
-                android:background="@drawable/selector_nfc"
-                android:scaleType="centerCrop"
-                app:srcCompat="@drawable/ic_nfc" />
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton

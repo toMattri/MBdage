@@ -4,6 +4,7 @@ public enum ResponseCreaVarco {
 
         SUCCESS(1),
         ERROR(-1),
+        ALREADY(0),
         ERR_PARAM(-4);
 
         int value;

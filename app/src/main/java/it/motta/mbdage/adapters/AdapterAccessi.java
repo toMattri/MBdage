@@ -2,6 +2,7 @@ package it.motta.mbdage.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +26,7 @@ import java.util.ArrayList;
 
 import it.motta.mbdage.R;
 import it.motta.mbdage.models.ItemPassaggi;
+import it.motta.mbdage.utils.Parameters;
 
 @SuppressLint({"SimpleDateFormat","SetTextI18n"})
 public class AdapterAccessi extends RecyclerView.Adapter<AdapterAccessi.ViewHolder> implements View.OnClickListener{
@@ -28,12 +34,14 @@ public class AdapterAccessi extends RecyclerView.Adapter<AdapterAccessi.ViewHold
     private final Context mContext;
     private final ArrayList<ItemPassaggi> itemPassaggi;
     private final SimpleDateFormat stringDoData,dataToString;
-
+    private final StorageReference imagesRef;
     public AdapterAccessi(Context mContext, ArrayList<ItemPassaggi> itemPassaggis) {
         super();
         this.mContext = mContext;
         this.itemPassaggi = itemPassaggis;
-
+        FirebaseStorage storage = FirebaseStorage.getInstance(Parameters.PATH_STORAGE);
+        StorageReference storageRef = storage.getReference();
+        imagesRef = storageRef.child("imagesVarco");
         this.stringDoData = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         this.dataToString = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     }
@@ -63,10 +71,12 @@ public class AdapterAccessi extends RecyclerView.Adapter<AdapterAccessi.ViewHold
             }
 
             if(StringUtils.isEmpty(itemPassaggi.getVarco().getImg()))
-                Picasso.get().load(R.drawable.ic_image).into( holder.imgVarco);
-            else
-                Picasso.get().load(itemPassaggi.getVarco().getImg()).error(R.drawable.ic_image).into(holder.imgVarco);
-
+                Picasso.get().load(R.drawable.ic_image).into(holder.imgVarco);
+            else {
+                imagesRef.child(itemPassaggi.getVarco().getImg()).getDownloadUrl().addOnSuccessListener(uri -> {
+                    Picasso.get().load(uri.toString()).into(holder.imgVarco);
+                }).addOnFailureListener(exception -> Picasso.get().load(R.drawable.ic_image).into(holder.imgVarco));
+            }
         }
     }
 

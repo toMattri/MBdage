@@ -34,6 +34,9 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.Task;
 import com.google.zxing.client.android.Intents;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
@@ -43,7 +46,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -68,15 +70,13 @@ import it.motta.mbdage.worker.OpenVarcoWorker;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     private CardView cardProfilo;
-    private CardView cardMovimenti;
-    private ImageButton btNfc, btQrCode;
     private Utente utente;
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView list;
     private FilterPassaggi filterPassaggi;
     private boolean loading = false;
-    private FusedLocationProviderClient fusedLocationClient;
-    private LocationRequest mLocationRequest;
+    private Double longitudine = null,latitudine = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,27 +92,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         filterPassaggi = new FilterPassaggi(utente.getId());
         swipeRefreshLayout.setRefreshing(true);
         this.onRefresh();
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
-        builder.addLocationRequest(mLocationRequest);
-        LocationSettingsRequest locationSettingsRequest = builder.build();
+
+
+        checkForLocation();
+    }
+
+    private void checkForLocation(){
+        FusedLocationProviderClient fusedLocationClient;
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) list.getLayoutManager();
-
-        list.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                if (dy > 0) {
-                    int visibleItemCount = linearLayoutManager.getChildCount();
-                    int totalItemCount = linearLayoutManager.getItemCount();
-                    int pastVisiblesItems = linearLayoutManager.findFirstVisibleItemPosition();
-                    if (loading) {
-                        if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
-                            onLoadMore();
-                        }
-                    }
+        Task<Location> locationResult = fusedLocationClient.getLastLocation();
+        locationResult.addOnCompleteListener(this, task -> {
+            if (task.isSuccessful()) {
+                Location lastKnownLocation;
+                lastKnownLocation = task.getResult();
+                if (lastKnownLocation != null) {
+                    longitudine = lastKnownLocation.getLongitude();
+                    latitudine = lastKnownLocation.getLatitude();
                 }
             }
         });
@@ -127,13 +122,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         txtEmail.setText(utente.getEmail());
         if (!StringUtils.isEmpty(utente.getImageUrl()))
             Picasso.get().load(Uri.decode(utente.getImageUrl())).resize(80, 80).centerInside().into(imgProfilo);
-        ImageButton btNfc = view.findViewById(R.id.btNfc);
         ImageButton btQr = view.findViewById(R.id.btQr);
         ImageButton btImpostazioni = view.findViewById(R.id.btImpostazioni);
         Button btMaps = view.findViewById(R.id.btMaps);
-        if (utente.getTipoUtente().equals(TypeUtente.NOCOMPLETED)) {
+
+        if (utente.getTipoUtente().equals(TypeUtente.NOCOMPLETED))
             btImpostazioni.setImageDrawable(getResources().getDrawable(R.drawable.ic_menu_err, null));
-        }
 
         btQr.setOnClickListener(this);
         btImpostazioni.setOnClickListener(this);
@@ -206,6 +200,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(MainActivity.this, DividerItemDecoration.VERTICAL);
                 list.addItemDecoration(dividerItemDecoration);
                 list.setAdapter(new AdapterAccessi(MainActivity.this, DBHandler.getIstance(MainActivity.this).getItemPassaggi(utente.getId())));
+                final LinearLayoutManager linearLayoutManager = (LinearLayoutManager)list.getLayoutManager();
+                list.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        if (dy > 0 && linearLayoutManager != null) {
+                            int visibleItemCount = linearLayoutManager.getChildCount();
+                            int totalItemCount = linearLayoutManager.getItemCount();
+                            int pastVisiblesItems = linearLayoutManager.findFirstVisibleItemPosition();
+                            if (loading) {
+                                if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                                    onLoadMore();
+                                }
+                            }
+                        }
+                    }
+                });
             }
             swipeRefreshLayout.setRefreshing(false);
             loading = true;
@@ -228,46 +238,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (result.getContents() == null) {
             Intent originalIntent = result.getOriginalIntent();
             if (originalIntent == null) {
-
                 Toast.makeText(MainActivity.this, "Cancelled", Toast.LENGTH_LONG).show();
             } else if (originalIntent.hasExtra(Intents.Scan.MISSING_CAMERA_PERMISSION)) {
                 Toast.makeText(MainActivity.this, "Cancelled due to missing camera permission", Toast.LENGTH_LONG).show();
             }
         } else {
             try {
-                Varco varco = traduceVarco(new JSONObject(result.getContents()));
-                fusedLocationClient.requestLocationUpdates(mLocationRequest, new LocationCallback() {
-                        @Override
-                        public void onLocationResult(LocationResult locationResult) { if(locationResult != null)
-                            openVarco(locationResult.getLastLocation(),varco);
-                        }
-                    }, Looper.myLooper());
-             /*   fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
-                    openVarco(location,varco);
-                });*/
+                Varco varco = new Varco(new JSONObject(result.getContents()));
+                openVarco(varco);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
     });
 
-    private Varco traduceVarco(JSONObject jsonObject) throws JSONException {
-        return new Varco(jsonObject.getLong("idVarco"),jsonObject.getDouble("lat"),jsonObject.getDouble("long"),"","");
-    }
-
-    private void openVarco(Location location,Varco varco){
-        if (location != null) {
-            BigDecimal res= BigDecimal.valueOf(Precision.round(Utils.calculateDist(varco.getLatitudine(),location.getLatitude(),varco.getLongitudine(),  location.getLongitude()),3,BigDecimal.ROUND_HALF_UP));
+    private void openVarco(Varco varco){
+        if (longitudine != null && latitudine != null) {
+            BigDecimal res= BigDecimal.valueOf(Precision.round(Utils.calculateDist(varco.getLatitudine(),latitudine,varco.getLongitudine(),longitudine),3,BigDecimal.ROUND_HALF_UP));
             long dist = res.multiply(new BigDecimal(1000)).longValue();
             Log.e("DIST " ,""+ dist);
             if(dist < 10){
                 new OpenVarcoWorker(MainActivity.this,utente,varco,iOpenVarco).execute();
-
             }else
                 new CustomDialog(MainActivity.this,"Attenzione","Sei troppo distante dall punto di accesso", TypeDialog.WARING).show();
         }else
             new CustomDialog(MainActivity.this,"Errore","Verifica se hai attivo la localizazzione").show();
-
     }
 
     private final IOpenVarco iOpenVarco = new IOpenVarco() {

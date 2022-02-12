@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_dialog"
@@ -9,8 +10,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        android:textSize="20sp" />
+        android:layout_marginVertical="5dp"
+        android:text="@string/creavarco"
+        android:textSize="22sp" />
 
     <View
         android:layout_width="match_parent"
@@ -22,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:hint="Descrizione varco"
+        android:hint="@string/descvarco"
         app:endIconMode="clear_text">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -51,12 +53,28 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Aggiungi una foto" />
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:text="@string/fotoluogo" />
+
+            <ImageButton
+                android:id="@+id/btDelete"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_delete" />
+        </LinearLayout>
 
         <androidx.cardview.widget.CardView
             android:layout_width="80dp"
@@ -82,7 +100,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -92,10 +111,10 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btAnnulla"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Annulla"
-                android:id="@+id/btAnnulla"/>
+                android:text="@string/annulla" />
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
@@ -103,7 +122,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:text="Crea" />
+            android:text="@string/setting_salva" />
 
     </LinearLayout>
 

@@ -1,14 +1,23 @@
 <resources>
     <string name="app_name">MBdage</string>
+    <string name="title_activity_maps">MBdage</string>
     <string name="gooogle_map_api_key">AIzaSyDN0FGXwDDuOlnpT6LuExFxlfd2GoKozC8</string>
 
     <string name="settingsActivity">Impostazioni</string>
+    <string name="creavarco">Crea Varco</string>
     <string name="setting_utente">Utente</string>
     <string name="setting_salva">Salva</string>
+    <string name="annulla">Annulla</string>
+
     <string name="no_complete_utente">Conferma il tuo utente con il primo accesso ad un varco!</string>
 
     <string name="hint_data">Data</string>
     <string name="data_nascita">Data di nascita</string>
+    <string name="fotoluogo">Aggiungi una foto per il luogo</string>
+    <string name="send_varcoimg">Condividi l\'accesso al varco</string>
+
+    <string name="lati">Latitudine</string>
+    <string name="longi">Longitudine</string>
 
     <string name="attenzione">Attenzione</string>
     <string name="successo">Operazione completata</string>
@@ -22,12 +31,15 @@
     <string name="err_dats">Si prega di inserire una data!</string>
 
     <string name="errore">Errore</string>
-    <string name="err_generico">Si è verifificato un errore!</string>
+    <string name="err_generico">Si è verificato un errore!</string>
     <string name="err_server">Si è verificato un errore durante la comunicazione con il server</string>
     <string name="err_param">Si è verificato un errore nel passaggio dei parametri!</string>
     <string name="err_update_param">Si è verificato un errore durante l\'aggiornamento dei parametri!</string>
     <string name="info_aggiorn">Informazioni aggiornate</string>
-    <string name="err_new_utente">Si è verificato un errore durante la creazione dell'utente!</string>
+    <string name="err_new_utente">Si è verificato un errore durante la creazione dell\'utente!</string>
+    <string name="err_load_varchi">Si è verificato un durante l\'aggiornamento dei varchi!</string>
+    <string name="err_load_img_varco">Si è verificato un durante il caricamento della foto dell\'arco</string>
+    <string name="err_already_varco">Un varco è già presente con le stesse posioni!</string>
 
     <string name="registraticon">Registrati ora…</string>
     <string name="oppurecon">Oppure continua con…</string>
@@ -39,6 +51,8 @@
     <string name="registrati">Registrati</string>
     <string name="cognome">Cognome</string>
     <string name="nome">Nome</string>
+    <string name="descvarco">Descrizione varco</string>
+
 
 
 </resources>

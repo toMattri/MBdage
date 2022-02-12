@@ -10,7 +10,6 @@
     <color name="primaryTextColor">#ffffff</color>
     <color name="secondaryTextColor">#ffffff</color>
 
-
     <color name="Gray">#7A7676</color>
     <color name="red">#F10B0B</color>
     <color name="purple_200">#FFBB86FC</color>
@@ -22,9 +21,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="nfc">#309DF4</color>
     <color name="qrCode">#F82D4C</color>
-
 
     <color name="blueSky">#309BDF</color>
     <color name="redAlert">#ED1D1D</color>
