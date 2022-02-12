@@ -6,6 +6,6 @@ public interface IAccessOperation {
 
     void OnCompleteOperation(JSONObject response);
     void OnError();
-
+    void OnErroreLoadImage();
 
 }

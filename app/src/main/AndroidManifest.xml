@@ -34,7 +34,7 @@
             android:resource="@color/colorSecondary" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@mipmap/ic_launcher" />
+            android:resource="@drawable/logo" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="it.motta.mbdage.fileprovider"
@@ -63,17 +63,14 @@
             android:name=".activities.MapsActivity"
             android:exported="false"
             android:label="@string/title_activity_maps" />
-        <activity
-            android:name=".activities.SettingsActivity"
-            android:exported="false"
-            android:label="@string/settingsActivity" />
         <activity android:name=".activities.LoginActivity" />
         <activity
             android:name=".activities.SplashActivity"
+            android:theme="@style/Theme.Transparent"
+
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
 
                 <action android:name="android.intent.action.VIEW" />
@@ -81,7 +78,6 @@
         </activity>
         <activity android:name=".activities.MainActivity" />
         <activity android:name=".activities.ScreenQrActivity" />
-
         <service
             android:name=".service.MessagingFireBaseService"
             android:exported="false">

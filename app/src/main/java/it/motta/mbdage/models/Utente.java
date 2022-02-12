@@ -10,7 +10,7 @@ public class Utente implements Serializable {
     private final int id;
     private final String displayName,email,UID;
     private String data,imageUrl;
-    private  TypeUtente tipoUtente;
+    private TypeUtente tipoUtente;
 
     public Utente(int id,String displayName, String email,String data, TypeUtente tipoUtente,String UID,String imageUrl) {
         this.displayName = displayName;
@@ -60,6 +60,8 @@ public class Utente implements Serializable {
     public String getImageUrl() {
         return imageUrl;
     }
+
+
 
     public void setTipoUtente(TypeUtente tipoUtente) {
         this.tipoUtente = tipoUtente;

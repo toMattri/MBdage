@@ -24,7 +24,6 @@ import java.util.Objects;
 
 import it.motta.mbdage.R;
 
-
 @SuppressLint("UseCompatLoadingForDrawables")
 public class ConfirmDialog extends DialogFragment implements View.OnClickListener{
 
@@ -48,12 +47,12 @@ public class ConfirmDialog extends DialogFragment implements View.OnClickListene
     public void setPositiveClickListner(String message, View.OnClickListener handler, @DrawableRes int background){
         postiveText = message;
         positiveHandler = handler;
-         bgPositive = background;
+        bgPositive = background;
         if(btPositive != null){
             btPositive.setText(postiveText);
             btPositive.setOnClickListener(this);
             if(background != -1)
-            btPositive.setBackground(getResources().getDrawable(background, getActivity().getTheme()));
+                btPositive.setBackground(getResources().getDrawable(background, getActivity().getTheme()));
             btPositive.setVisibility(View.VISIBLE);
         }
     }
@@ -82,6 +81,7 @@ public class ConfirmDialog extends DialogFragment implements View.OnClickListene
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setStyle(DialogFragment.STYLE_NO_TITLE, R.style.Theme_MBdage);
     }
 
     @Nullable

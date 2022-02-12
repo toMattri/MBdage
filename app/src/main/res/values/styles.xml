@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <style name="defaultButton" parent="Widget.AppCompat.Button">
         <item name="android:background">@drawable/selector_first_button</item>
@@ -30,8 +30,8 @@
     <style name="Animation"/>
 
     <style name="Animation.showDialog">
-        <item name="android:windowEnterAnimation">@anim/fromdown</item>
-        <item name="android:windowExitAnimation">@anim/pushdown</item>
+        <item name="android:windowEnterAnimation">@anim/pushdown</item>
+        <item name="android:windowExitAnimation">@anim/fromdown</item>
     </style>
 
     <style name="Animation.showDialog.Varco">

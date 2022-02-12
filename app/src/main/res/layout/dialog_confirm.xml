@@ -15,14 +15,14 @@
         android:gravity="center"
         android:text="TextView"
         android:textColor="@color/colorPrimary"
-        android:textSize="24sp"
+        android:textSize="22sp"
         android:textStyle="bold" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:layout_weight="0"
-        android:background="@android:color/darker_gray" />
+        android:background="@color/colorSecondary" />
 
     <TextView
         android:id="@+id/txtMessage"

@@ -38,7 +38,7 @@ public class UpdateTokenWorker extends AsyncTask<Void,Void,Void> {
     @Override
     protected Void doInBackground(Void... voids) {
         MakeHttpRequest.sendPost(mContext,MakeHttpRequest.BASE_IP + MakeHttpRequest.REGISTER_TOKEN, TraduceComunication.traduce(idUtente,deviceName,token), response -> {
-            Log.e("RESPONSE TOke",response);
+            Log.e("Response token",response);
         }, Throwable::printStackTrace);
         return null;
     }

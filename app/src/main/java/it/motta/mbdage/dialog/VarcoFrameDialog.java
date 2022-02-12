@@ -9,11 +9,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.InsetDrawable;
 import android.graphics.pdf.PdfDocument;
-import android.media.Image;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.StrictMode;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +18,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -33,15 +28,10 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.zxing.WriterException;
-import com.google.zxing.pdf417.PDF417Writer;
-import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Document;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.util.Objects;
 
 import it.motta.mbdage.R;
@@ -63,6 +53,8 @@ public class VarcoFrameDialog extends DialogFragment implements View.OnClickList
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    setStyle(DialogFragment.STYLE_NO_TITLE, R.style.Theme_MBdage);
+
   }
 
   @Override
@@ -137,7 +129,7 @@ public class VarcoFrameDialog extends DialogFragment implements View.OnClickList
 
     if(window != null) {
       ColorDrawable back = new ColorDrawable(Color.TRANSPARENT);
-      InsetDrawable inset = new InsetDrawable(back, 48, 24, 48, 36);
+      InsetDrawable inset = new InsetDrawable(back, 24, 24, 24, 24);
       window.setBackgroundDrawable(inset);
       window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
       window.setGravity(Gravity.CENTER);

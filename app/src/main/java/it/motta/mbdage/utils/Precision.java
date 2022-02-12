@@ -14,7 +14,7 @@ public class Precision {
         } catch (NumberFormatException ex) {
             if (Double.isInfinite(x))
                 return x;
-             else
+            else
                 return Double.NaN;
         }
     }

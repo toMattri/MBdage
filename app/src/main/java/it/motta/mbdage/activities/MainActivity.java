@@ -1,13 +1,13 @@
 package it.motta.mbdage.activities;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -29,14 +29,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.google.zxing.client.android.Intents;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
@@ -47,12 +43,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import it.motta.mbdage.R;
 import it.motta.mbdage.adapters.AdapterAccessi;
 import it.motta.mbdage.database.DBHandler;
 import it.motta.mbdage.dialog.CustomDialog;
+import it.motta.mbdage.dialog.DialogOpenVarco;
+import it.motta.mbdage.dialog.FilterPassaggiDialog;
+import it.motta.mbdage.dialog.SettingsDialog;
 import it.motta.mbdage.interfaces.ILoadPassaggi;
 import it.motta.mbdage.interfaces.IOpenVarco;
 import it.motta.mbdage.models.Utente;
@@ -74,9 +74,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView list;
     private FilterPassaggi filterPassaggi;
-    private boolean loading = false;
+    private boolean relaod = false;
     private Double longitudine = null,latitudine = null;
-
+    private SettingsDialog settingsDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,9 +90,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         cardProfilo.addView(setContentProfilo());
         swipeRefreshLayout.setOnRefreshListener(this);
         filterPassaggi = new FilterPassaggi(utente.getId());
+        ImageButton btFiltro = findViewById(R.id.btFiltro);
+        btFiltro.setOnClickListener(this);
         swipeRefreshLayout.setRefreshing(true);
-        this.onRefresh();
 
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(MainActivity.this, DividerItemDecoration.VERTICAL);
+        list.addItemDecoration(dividerItemDecoration);
+        this.onRefresh();
 
         checkForLocation();
     }
@@ -108,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (lastKnownLocation != null) {
                     longitudine = lastKnownLocation.getLongitude();
                     latitudine = lastKnownLocation.getLatitude();
+                    Log.e("Check POS: ",longitudine + " " + latitudine);
                 }
             }
         });
@@ -120,12 +125,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         TextView txtEmail = view.findViewById(R.id.txtEmail);
         txtDisplay.setText(utente.getDisplayName());
         txtEmail.setText(utente.getEmail());
-        if (!StringUtils.isEmpty(utente.getImageUrl()))
-            Picasso.get().load(Uri.decode(utente.getImageUrl())).resize(80, 80).centerInside().into(imgProfilo);
+        if (!StringUtils.isEmpty(utente.getImageUrl())) {
+            if(utente.getImageUrl().contains("https"))
+                Picasso.get().load(Uri.decode(utente.getImageUrl())).resize(80, 80).centerInside().into(imgProfilo);
+            else{
+                new Handler().postDelayed(() -> {
+                    FirebaseStorage storage = FirebaseStorage.getInstance(Parameters.PATH_STORAGE);
+                    StorageReference storageRef = storage.getReference();
+                    runOnUiThread(()->{
+                        storageRef.child(utente.getImageUrl()).getDownloadUrl().addOnSuccessListener( uri -> Picasso.get().load(uri).into(imgProfilo)).
+                            addOnFailureListener(Throwable::printStackTrace);
+                    });
+                },500);
+            }
+        }else {
+            imgProfilo.setImageDrawable(getResources().getDrawable(R.drawable.ic_default_user,null));
+        }
+
         ImageButton btQr = view.findViewById(R.id.btQr);
         ImageButton btImpostazioni = view.findViewById(R.id.btImpostazioni);
         Button btMaps = view.findViewById(R.id.btMaps);
-
         if (utente.getTipoUtente().equals(TypeUtente.NOCOMPLETED))
             btImpostazioni.setImageDrawable(getResources().getDrawable(R.drawable.ic_menu_err, null));
 
@@ -133,6 +152,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btImpostazioni.setOnClickListener(this);
         btMaps.setOnClickListener(this);
         return view;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkForLocation();
     }
 
     @Override
@@ -153,9 +178,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 menu.setOnMenuItemClickListener(item -> {
                     switch (item.getNumericShortcut()) {
                         case '0':
-                            Intent intent = new Intent(this, SettingsActivity.class);
-                            intent.putExtra(Parameters.INTENT_UTENTE, utente);
-                            startActivity(intent);
+                            settingsDialog = new SettingsDialog(getSupportFragmentManager(),utente, v-> {
+                                cardProfilo.addView(setContentProfilo());
+                            });
+                            settingsDialog.show();
                             break;
                         case '1':
                             Utils.logOut(this);
@@ -169,68 +195,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intent.putExtra(Parameters.INTENT_UTENTE, utente);
                 startActivity(intent);
                 break;
+            case R.id.btFiltro:
+                FilterPassaggiDialog filterPassaggiDialog = new FilterPassaggiDialog(this,filterPassaggi,utente);
+                filterPassaggiDialog.setOnDismissListener(di -> {
+                    if(filterPassaggiDialog.getFilter() != filterPassaggi){
+                        filterPassaggi = filterPassaggiDialog.getFilter();
+                        swipeRefreshLayout.setRefreshing(true);
+                        relaod = true;
+                        this.onRefresh();
+                    }
+                });
+                filterPassaggiDialog.show();
         }
     }
 
     @Override
     public void onRefresh() {
-        loading = false;
         new Handler().postDelayed(() -> {
-            filterPassaggi.resetPager();
-            new LoadPassaggiWorker(this, filterPassaggi, iLoadPassaggi).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            new LoadPassaggiWorker(this, filterPassaggi, iLoadPassaggi,relaod).execute();
         }, 2000);
+        relaod = false;
     }
 
-    public void onLoadMore() {
-        swipeRefreshLayout.setRefreshing(true);
-        new Handler().postDelayed(() -> {
-            filterPassaggi.updatePager();
-            new LoadPassaggiWorker(this, filterPassaggi, iLoadPassaggi).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }, 2000);
-    }
 
     private final ILoadPassaggi iLoadPassaggi = new ILoadPassaggi() {
         @Override
         public void OnComplete() {
-            if (loading) {
-                DBHandler.getIstance(MainActivity.this).getItemPassaggiWhitLoaded(utente.getId(), ((AdapterAccessi) list.getAdapter()).getItems());
-                list.getAdapter().notifyDataSetChanged();
-            } else {
-                list.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-                DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(MainActivity.this, DividerItemDecoration.VERTICAL);
-                list.addItemDecoration(dividerItemDecoration);
-                list.setAdapter(new AdapterAccessi(MainActivity.this, DBHandler.getIstance(MainActivity.this).getItemPassaggi(utente.getId())));
-                final LinearLayoutManager linearLayoutManager = (LinearLayoutManager)list.getLayoutManager();
-                list.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                    @Override
-                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                        if (dy > 0 && linearLayoutManager != null) {
-                            int visibleItemCount = linearLayoutManager.getChildCount();
-                            int totalItemCount = linearLayoutManager.getItemCount();
-                            int pastVisiblesItems = linearLayoutManager.findFirstVisibleItemPosition();
-                            if (loading) {
-                                if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
-                                    onLoadMore();
-                                }
-                            }
-                        }
-                    }
-                });
-            }
+            final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
+            list.setLayoutManager(linearLayoutManager);
+            list.setAdapter(new AdapterAccessi(MainActivity.this,DBHandler.getIstance(MainActivity.this).getItemPassaggi(utente.getId())));
             swipeRefreshLayout.setRefreshing(false);
-            loading = true;
         }
 
         @Override
         public void OnError() {
             swipeRefreshLayout.setRefreshing(false);
-            loading = true;
         }
 
         @Override
         public void OnCompleteWithout() {
+            list.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(MainActivity.this, DividerItemDecoration.VERTICAL);
+            list.addItemDecoration(dividerItemDecoration);
+            list.setAdapter(new AdapterAccessi(MainActivity.this, new ArrayList<>()));
             swipeRefreshLayout.setRefreshing(false);
-            loading = true;
         }
     };
 
@@ -238,9 +246,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (result.getContents() == null) {
             Intent originalIntent = result.getOriginalIntent();
             if (originalIntent == null) {
-                Toast.makeText(MainActivity.this, "Cancelled", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this,getResources().getString(R.string.op_cancellata), Toast.LENGTH_LONG).show();
             } else if (originalIntent.hasExtra(Intents.Scan.MISSING_CAMERA_PERMISSION)) {
-                Toast.makeText(MainActivity.this, "Cancelled due to missing camera permission", Toast.LENGTH_LONG).show();
+                new CustomDialog(MainActivity.this, getResources().getString(R.string.errore),getResources().getString(R.string.err_perm_cam),TypeDialog.ERROR).show();
             }
         } else {
             try {
@@ -259,18 +267,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.e("DIST " ,""+ dist);
             if(dist < 10){
                 new OpenVarcoWorker(MainActivity.this,utente,varco,iOpenVarco).execute();
-            }else
-                new CustomDialog(MainActivity.this,"Attenzione","Sei troppo distante dall punto di accesso", TypeDialog.WARING).show();
-        }else
-            new CustomDialog(MainActivity.this,"Errore","Verifica se hai attivo la localizazzione").show();
+            }else {
+                new CustomDialog(MainActivity.this, getResources().getString(R.string.attenzione), getResources().getString(R.string.lontano), TypeDialog.WARING).show();
+                checkForLocation();
+            }
+        }else {
+            new CustomDialog(MainActivity.this, getResources().getString(R.string.errore), getResources().getString(R.string.err_perm_geo)).show();
+            checkForLocation();
+        }
     }
 
     private final IOpenVarco iOpenVarco = new IOpenVarco() {
         @Override
         public void OnSuccess(boolean completeUtente) {
+            new DialogOpenVarco(getSupportFragmentManager()).show();
             if(completeUtente){
                 DBHandler.getIstance(MainActivity.this).completeUtente(utente);
-                setContentProfilo();
+                cardProfilo.addView(setContentProfilo());
             }
             swipeRefreshLayout.setRefreshing(true);
             onRefresh();
@@ -278,28 +291,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void ErrorParam() {
-            new CustomDialog(MainActivity.this,"Errore","Verifica se hai attivo la localizazzione").show();
+            new CustomDialog(MainActivity.this,getResources().getString(R.string.errore),getResources().getString(R.string.err_param)).show();
         }
 
         @Override
         public void ErrorApertura() {
-            new CustomDialog(MainActivity.this,"Errore","Verifica se hai attivo la localizazzione").show();
+            new CustomDialog(MainActivity.this,getResources().getString(R.string.errore),getResources().getString(R.string.err_open)).show();
         }
 
         @Override
         public void ErroGeneric() {
-            new CustomDialog(MainActivity.this,"Errore","Verifica se hai attivo la localizazzione").show();
+            new CustomDialog(MainActivity.this,getResources().getString(R.string.errore),getResources().getString(R.string.err_generico)).show();
         }
 
         @Override
         public void ErrorConnection() {
-            new CustomDialog(MainActivity.this,"Errore","Verifica se hai attivo la localizazzione").show();
+            new CustomDialog(MainActivity.this,getResources().getString(R.string.errore),getResources().getString(R.string.err_server)).show();
         }
 
         @Override
         public void ErrToken() {
-            new CustomDialog(MainActivity.this,"Errore","Verifica se hai attivo la localizazzione").show();
+            new CustomDialog(MainActivity.this,getResources().getString(R.string.errore),getResources().getString(R.string.err_token)).show();
         }
     };
+
+
+
+
+
+
 
 }

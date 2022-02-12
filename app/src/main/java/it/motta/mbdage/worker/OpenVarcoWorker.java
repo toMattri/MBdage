@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 
 import org.json.JSONObject;
 
+import it.motta.mbdage.R;
 import it.motta.mbdage.dialog.ProgressCDialog;
 import it.motta.mbdage.interfaces.IOpenVarco;
 import it.motta.mbdage.models.Utente;
@@ -35,8 +36,8 @@ public class OpenVarcoWorker extends AsyncTask<Void,Void,String> {
   protected void onPreExecute() {
     super.onPreExecute();
     progressCDialog = new ProgressCDialog(mContext);
-    progressCDialog.setTitle("Caricamento in corso");
-    progressCDialog.setMessage("Registrazione in corso...");
+    progressCDialog.setTitle(mContext.getResources().getString(R.string.loading));
+    progressCDialog.setMessage(mContext.getResources().getString(R.string.open_varco));
     progressCDialog.show();
   }
 
@@ -52,8 +53,8 @@ public class OpenVarcoWorker extends AsyncTask<Void,Void,String> {
         JSONObject jsonObject = new JSONObject(response);
         switch (ResponseOpenVarco.fromValue(jsonObject.getInt("result"))) {
           case SUCCESS:
-              iOpenVarco.OnSuccess(jsonObject.has("update"));
-              break;
+            iOpenVarco.OnSuccess(jsonObject.has("update"));
+            break;
           case ERR_PARAM:
             iOpenVarco.ErrorParam();
             break;

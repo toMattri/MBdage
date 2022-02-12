@@ -16,27 +16,27 @@ public interface UtenteTable extends BaseColumns {
     String CL_URL_IMAGE = "image";
 
     String[] COLUMNS = {
-            _ID,
-            CL_DISPLAY_NAME,
-            CL_NASCITA,
-            CL_TIPO,
-            CL_EMAIL,
-            CL_URL_IMAGE
+        _ID,
+        CL_DISPLAY_NAME,
+        CL_NASCITA,
+        CL_TIPO,
+        CL_EMAIL,
+        CL_URL_IMAGE
     };
 
     String TABLE = MessageFormat.format("CREATE TABLE {0} " +
-                    "({1} INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "{2} TEXT NOT NULL, " +
-                    "{3} TEXT ," +
-                    "{4} TEXT ," +
-                    "{5} INTEGER NOT NULL," +
-                    "{6} TEXT NOT NULL);",
-            TABLE_NAME,
-            _ID,
-            CL_DISPLAY_NAME,
-            CL_NASCITA,
-            CL_URL_IMAGE,
-            CL_TIPO,
-            CL_EMAIL);
+            "({1} INTEGER PRIMARY KEY AUTOINCREMENT," +
+            "{2} TEXT NOT NULL, " +
+            "{3} TEXT ," +
+            "{4} TEXT ," +
+            "{5} INTEGER NOT NULL," +
+            "{6} TEXT NOT NULL);",
+        TABLE_NAME,
+        _ID,
+        CL_DISPLAY_NAME,
+        CL_NASCITA,
+        CL_URL_IMAGE,
+        CL_TIPO,
+        CL_EMAIL);
 
 }

@@ -133,8 +133,6 @@ public class TraduceComunication {
                 request.put(DATADAL, filterPassaggi.getTimeDal());
             if (!StringUtils.isEmpty(filterPassaggi.getTimeAl()))
                 request.put(DATAAL, filterPassaggi.getTimeAl());
-            request.put(PAGER, String.valueOf(filterPassaggi.getPager()));
-
         }
         return request;
     }

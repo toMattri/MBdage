@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import it.motta.mbdage.R;
 import it.motta.mbdage.models.evalue.TypeDialog;
 
-
 @SuppressLint("UseCompatLoadingForDrawables")
 public class CustomDialog extends Dialog {
 

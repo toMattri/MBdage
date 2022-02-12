@@ -3,6 +3,8 @@
     <string name="title_activity_maps">MBdage</string>
     <string name="gooogle_map_api_key">AIzaSyDN0FGXwDDuOlnpT6LuExFxlfd2GoKozC8</string>
 
+    <string name="icon8licence">Tutte le icone dell\'app sono state prese dal sito icons8.com.\nVisita per molte altre icone</string>
+
     <string name="settingsActivity">Impostazioni</string>
     <string name="creavarco">Crea Varco</string>
     <string name="setting_utente">Utente</string>
@@ -11,8 +13,11 @@
 
     <string name="no_complete_utente">Conferma il tuo utente con il primo accesso ad un varco!</string>
 
+    <string name="success_unclock">Varco sbloccatto correttamente</string>
+
     <string name="hint_data">Data</string>
     <string name="data_nascita">Data di nascita</string>
+
     <string name="fotoluogo">Aggiungi una foto per il luogo</string>
     <string name="send_varcoimg">Condividi l\'accesso al varco</string>
 
@@ -23,27 +28,38 @@
     <string name="successo">Operazione completata</string>
     <string name="no_utente">Non è stato trovato nessun utente con i dati inseriti</string>
     <string name="presente_utente">Utente già presente!</string>
+    <string name="lontano">Sei troppo distante dal punto di accesso.Avvicinarsi e riprovare!</string>
+    <string name="err_perm_geo">Verificare i permessi sulla localizzazione.Riprovare</string>
+    <string name="err_perm_cam">Verificare i permessi sulla fotocamera.Riprovare</string>
+    <string name="op_cancellata">Operazione cancellata</string>
 
     <string name="err_nome">Inserire un nome valido</string>
     <string name="err_cognome">Inserire un cognome valido</string>
     <string name="err_email">Inserire una email valida</string>
     <string name="err_password">Inserire una password valida</string>
     <string name="err_dats">Si prega di inserire una data!</string>
+    <string name="err_dats_dal">Si prega di inserire una data iniziale!</string>
+    <string name="err_dats_al">Si prega di inserire una data finale!</string>
 
     <string name="errore">Errore</string>
     <string name="err_generico">Si è verificato un errore!</string>
     <string name="err_server">Si è verificato un errore durante la comunicazione con il server</string>
+    <string name="err_token">Il token risulta scaduto o errato!Riprovare</string>
+    <string name="err_open">Si è verificato un errore durante l\'apertura del varco!Riprovare</string>
     <string name="err_param">Si è verificato un errore nel passaggio dei parametri!</string>
     <string name="err_update_param">Si è verificato un errore durante l\'aggiornamento dei parametri!</string>
     <string name="info_aggiorn">Informazioni aggiornate</string>
     <string name="err_new_utente">Si è verificato un errore durante la creazione dell\'utente!</string>
-    <string name="err_load_varchi">Si è verificato un durante l\'aggiornamento dei varchi!</string>
-    <string name="err_load_img_varco">Si è verificato un durante il caricamento della foto dell\'arco</string>
+    <string name="err_load_varchi">Si è verificato un errore durante l\'aggiornamento dei varchi!</string>
+    <string name="err_load_img_varco">Si è verificato un errore durante il caricamento della foto dell\'arco</string>
+    <string name="err_load_imgutente">Si è verificato un errore durante il caricamento della foto dell\'utente</string>
     <string name="err_already_varco">Un varco è già presente con le stesse posioni!</string>
 
     <string name="registraticon">Registrati ora…</string>
     <string name="oppurecon">Oppure continua con…</string>
     <string name="accedicon">Accedi…</string>
+    <string name="oppure">Oppure…</string>
+    <string name="continuacon">Continua con…</string>
 
     <string name="email">Email</string>
     <string name="password">Password</string>
@@ -52,7 +68,17 @@
     <string name="cognome">Cognome</string>
     <string name="nome">Nome</string>
     <string name="descvarco">Descrizione varco</string>
-
+    <string name="ultimi_accessi">Ultimi accessi</string>
+    <string name="filtro_accessi">Filtro accessi</string>
+    <string name="data_dal">Data dal</string>
+    <string name="data_al">Data al</string>
+    <string name="chiudi">Chiudi</string>
+    <string name="conferma">Conferma</string>
+    <string name="loading">Caricamento in corso…</string>
+    <string name="registrazione_loading">Registrazione in corso…</string>
+    <string name="creazionevarco_loading">Creazione varco in corso…</string>
+    <string name="loging_loading">Accesso in corso…</string>
+    <string name="open_varco">Apertura varco in corso…</string>
 
 
 </resources>

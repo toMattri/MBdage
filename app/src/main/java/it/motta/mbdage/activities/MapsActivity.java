@@ -25,16 +25,14 @@ import it.motta.mbdage.dialog.CustomDialog;
 import it.motta.mbdage.dialog.VarcoFrameDialog;
 import it.motta.mbdage.interfaces.ICreateVarco;
 import it.motta.mbdage.interfaces.ILoadVarchi;
-import it.motta.mbdage.models.Utente;
 import it.motta.mbdage.models.Varco;
-import it.motta.mbdage.utils.Parameters;
 import it.motta.mbdage.worker.LoadVarchiWoker;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
 
   private GoogleMap mMap;
   private CreaVarcoDialog creaVarcoDialog;
-  private Utente utente;
+  //private Utente utente;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +40,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     setContentView(R.layout.activity_maps);
     SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
     mapFragment.getMapAsync(this);
-    utente = (Utente) getIntent().getSerializableExtra(Parameters.INTENT_UTENTE);
+    //utente = (Utente) getIntent().getSerializableExtra(Parameters.INTENT_UTENTE);
 
   }
 
@@ -120,7 +118,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
       locationResult.addOnCompleteListener(this, task -> {
         if (task.isSuccessful()) {
           Location lastKnownLocation;
-          // Set the map's camera position to the current location of the device.
           lastKnownLocation = task.getResult();
           if (lastKnownLocation != null) {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(

@@ -2,6 +2,7 @@ package it.motta.mbdage.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
@@ -10,7 +11,6 @@ import android.util.Log;
 import android.view.Window;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -21,22 +21,20 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONObject;
 
-import java.util.Objects;
-
 import it.motta.mbdage.R;
 import it.motta.mbdage.database.DBHandler;
 import it.motta.mbdage.interfaces.IAccessOperation;
-import it.motta.mbdage.response.ResponseAccess;
 import it.motta.mbdage.models.Utente;
 import it.motta.mbdage.models.evalue.TypeLogin;
 import it.motta.mbdage.models.evalue.TypeUtente;
+import it.motta.mbdage.response.ResponseAccess;
 import it.motta.mbdage.utils.TraduceComunication;
 import it.motta.mbdage.worker.LoadVarchiWoker;
 import it.motta.mbdage.worker.LoginWorker;
 import it.motta.mbdage.worker.UpdateTokenWorker;
 
 @SuppressLint("CustomSplashScreen")
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends Activity {
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
@@ -45,7 +43,6 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
-        Objects.requireNonNull(getSupportActionBar()).hide();
         setContentView(R.layout.activity_splash);
 
         if ((ContextCompat.checkSelfPermission(this,
@@ -118,7 +115,7 @@ public class SplashActivity extends AppCompatActivity {
         if(currentUser == null)
             startActivity(new Intent(this, LoginActivity.class));
         else {
-           Utente utente =  DBHandler.getIstance(this).getUtente();
+            Utente utente =  DBHandler.getIstance(this).getUtente();
             if(utente == null){
                 String typeLogin;
                 switch (currentUser.getProviderId()){
@@ -184,6 +181,11 @@ public class SplashActivity extends AppCompatActivity {
         public void OnError() {
             startActivity(new Intent(SplashActivity.this,LoginActivity.class));
             finish();
+        }
+
+        @Override
+        public void OnErroreLoadImage() {
+            /*notUse*/
         }
 
     };

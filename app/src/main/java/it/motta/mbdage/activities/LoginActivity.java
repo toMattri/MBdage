@@ -21,7 +21,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
@@ -63,7 +62,6 @@ import it.motta.mbdage.worker.UpdateTokenWorker;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int RC_SIGN_IN = 9001;
-    private SignInButton signInButton,signInButtonGit;
     private TextInputEditText edtEmailAccedi,edtPasswordAccedi,edtNomeRegistrati,edtCognomeRegistrati,edtEmailRegistrati,edtPasswordRegistrati,edtDataRegistrati;
     private FirebaseAuth mAuth;
     private FirebaseMessaging mMessaging;
@@ -71,7 +69,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private OAuthProvider.Builder provider;
     private GoogleSignInClient mGoogleSignInClient;
     private Animation centerToRight,leftToCenter;
-    private Button btAccedi, btRegistrati;
+    private Button btAccedi, btRegistrati,signInButton,signInButtonGit;
     private TextView txtRegistrati,txtAccedi;
     private CardView cardLogin, cardRegistrati;
     private LinearLayout llSignWIthOther;
@@ -179,13 +177,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void signInGitHub(){
         mAuth.startActivityForSignInWithProvider(this, provider.build())
-                .addOnSuccessListener(authResult -> {
-                    new RegisterWorker(this,createUserWithImage(authResult.getUser(),""),TypeLogin.GIT,iAccessOperation).execute();
-                })
-                .addOnFailureListener(e -> {
-                    e.printStackTrace();
-                    new CustomDialog(this,getResources().getString(R.string.attenzione),getResources().getString(R.string.no_utente),TypeDialog.WARING).show();
-                });
+            .addOnSuccessListener(authResult -> {
+                new RegisterWorker(this,createUserWithImage(authResult.getUser(),""),TypeLogin.GIT,iAccessOperation).execute();
+            })
+            .addOnFailureListener(e -> {
+                e.printStackTrace();
+                new CustomDialog(this,getResources().getString(R.string.attenzione),getResources().getString(R.string.no_utente),TypeDialog.WARING).show();
+            });
     }
 
     @Override
@@ -278,13 +276,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                 String finalData = data;
                 mAuth.createUserWithEmailAndPassword(edtEmailRegistrati.getText().toString().trim(),edtPasswordRegistrati.getText().toString().trim())
-                        .addOnCompleteListener(this, task -> {
-                            if (task.isSuccessful()) {
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                new RegisterWorker(this,createUser(user,edtCognomeRegistrati.getText().toString() + " " + edtNomeRegistrati.getText().toString(), finalData),TypeLogin.EMIAL,iAccessOperation).execute();
-                            } else
-                                new CustomDialog(this,getResources().getString(R.string.attenzione),getResources().getString(R.string.presente_utente), TypeDialog.WARING).show();
-                        });
+                    .addOnCompleteListener(this, task -> {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            new RegisterWorker(this,createUser(user,edtCognomeRegistrati.getText().toString() + " " + edtNomeRegistrati.getText().toString(), finalData),TypeLogin.EMIAL,iAccessOperation).execute();
+                        } else
+                            new CustomDialog(this,getResources().getString(R.string.attenzione),getResources().getString(R.string.presente_utente), TypeDialog.WARING).show();
+                    });
                 break;
             case R.id.btAccedi:
                 boolean blAccedi = true;
@@ -303,14 +301,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (!blAccedi) return;
 
                 mAuth.signInWithEmailAndPassword(edtEmailAccedi.getText().toString(), edtPasswordAccedi.getText().toString())
-                        .addOnCompleteListener(this, task -> {
-                            if (task.isSuccessful()) {
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                new LoginWorker(this,createUserWithImage(user,""), TypeLogin.EMIAL,iAccessOperation).execute();
-                            } else {
-                                new CustomDialog(this,getResources().getString(R.string.attenzione),getResources().getString(R.string.no_utente), TypeDialog.WARING).show();
-                            }
-                        });
+                    .addOnCompleteListener(this, task -> {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            new LoginWorker(this,createUserWithImage(user,""), TypeLogin.EMIAL,iAccessOperation).execute();
+                        } else {
+                            new CustomDialog(this,getResources().getString(R.string.attenzione),getResources().getString(R.string.no_utente), TypeDialog.WARING).show();
+                        }
+                    });
                 break;
             case R.id.signInGoogle:
                 signInGoogle();
@@ -328,12 +326,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         return new Utente(displayName,firebaseUser.getEmail(),Data, TypeUtente.NOCOMPLETED,firebaseUser.getUid(),"");
     }
 
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         return super.onKeyDown(keyCode, event);
     }
-
 
     private final IAccessOperation iAccessOperation = new IAccessOperation() {
         @Override
@@ -365,7 +361,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
             }catch (Exception ex){
                 ex.printStackTrace();
-                CustomDialog customDialog = new CustomDialog(LoginActivity.this,getResources().getString(R.string.attenzione),"Si è verificato un errore", TypeDialog.WARING);
+                CustomDialog customDialog = new CustomDialog(LoginActivity.this,getResources().getString(R.string.attenzione),getResources().getString(R.string.err_generico), TypeDialog.WARING);
                 customDialog.show();
             }
 
@@ -373,8 +369,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         @Override
         public void OnError() {
-            CustomDialog customDialog = new CustomDialog(LoginActivity.this,getResources().getString(R.string.errore),"Errore durante la comunicazione con il server!", TypeDialog.ERROR);
+            CustomDialog customDialog = new CustomDialog(LoginActivity.this,getResources().getString(R.string.errore),getResources().getString(R.string.err_server), TypeDialog.ERROR);
             customDialog.show();
+        }
+
+        @Override
+        public void OnErroreLoadImage() {
+
         }
 
     };
@@ -383,7 +384,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mMessaging.getToken().addOnCompleteListener(task -> {
             if (!task.isSuccessful())
                 return;
-
             String token = task.getResult();
             new UpdateTokenWorker(this,idUtente,token).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         });

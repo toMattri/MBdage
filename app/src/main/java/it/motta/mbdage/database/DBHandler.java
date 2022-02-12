@@ -38,7 +38,6 @@ public class DBHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         try {
-
             db.execSQL(PassagiTable.TABLE);
             db.execSQL(UtenteTable.TABLE);
             db.execSQL(VarchiTable.TABLE);
@@ -46,7 +45,6 @@ public class DBHandler extends SQLiteOpenHelper {
             ex.printStackTrace();
         }
     }
-
 
     public Utente getUtente(){
         try(Cursor c = getReadableDatabase().rawQuery("Select * FROM " + UtenteTable.TABLE_NAME +" LIMIT 1",null)) {
@@ -59,7 +57,6 @@ public class DBHandler extends SQLiteOpenHelper {
         }
         return null;
     }
-
 
     public void logginUser(Utente utente){
         deleteUtente();
@@ -91,7 +88,6 @@ public class DBHandler extends SQLiteOpenHelper {
         }
     }
 
-
     public ArrayList<Varco> getVarchi(){
         ArrayList<Varco> varcos = new ArrayList<>();
         try(Cursor c = getReadableDatabase().rawQuery("Select * FROM " + VarchiTable.TABLE_NAME ,null)) {
@@ -107,7 +103,6 @@ public class DBHandler extends SQLiteOpenHelper {
 
     }
 
-
     public void completeUtente(Utente utente){
         ContentValues cv = new ContentValues();
         cv.put(UtenteTable.CL_TIPO,TypeUtente.COMPLETED.ordinal());
@@ -115,9 +110,13 @@ public class DBHandler extends SQLiteOpenHelper {
         utente.setTipoUtente(TypeUtente.COMPLETED);
     }
 
-    public void writePassaggi(ArrayList<Passaggio> passaggi){
-        ArrayList<Integer> mapInt = (ArrayList<Integer>) passaggi.stream().mapToInt(Passaggio::getId).boxed().collect(Collectors.toList());
-        getWritableDatabase().delete(PassagiTable.TABLE_NAME,PassagiTable._ID + " IN (?)",new String[]{mapInt.toString().substring(1,mapInt.toString().length()-1)});
+    public void writePassaggi(ArrayList<Passaggio> passaggi, boolean reload){
+        if(reload){
+            getWritableDatabase().delete(PassagiTable.TABLE_NAME,PassagiTable._ID + " > 0",null);
+        } else {
+            ArrayList<Integer> mapInt = (ArrayList<Integer>) passaggi.stream().mapToInt(Passaggio::getId).boxed().collect(Collectors.toList());
+            getWritableDatabase().delete(PassagiTable.TABLE_NAME, PassagiTable._ID + " IN (?)", new String[]{mapInt.toString().substring(1, mapInt.toString().length() - 1)});
+        }
         ContentValues cv;
         for(Passaggio pas : passaggi) {
             cv = new ContentValues();
@@ -140,10 +139,11 @@ public class DBHandler extends SQLiteOpenHelper {
             VarchiTable.TABLE_NAME + "." + VarchiTable.CL_LATITUDINE  +"," +
             VarchiTable.TABLE_NAME + "." + VarchiTable.CL_LONGITUDINE  +"," +
             VarchiTable.TABLE_NAME + "." + VarchiTable.CL_IMAGE  +
-            " FROM " + PassagiTable.TABLE_NAME +" LEFT JOIN " + VarchiTable.TABLE_NAME + " ON " +
+            " FROM " + PassagiTable.TABLE_NAME +" INNER JOIN " + VarchiTable.TABLE_NAME + " ON " +
             PassagiTable.TABLE_NAME + "." + PassagiTable.CL_ID_VARCO +" = " + VarchiTable.TABLE_NAME + "." + VarchiTable._ID +
 
-            " where " + PassagiTable.TABLE_NAME + "." + PassagiTable.CL_ID_UTENTE + " = " + idUtente + "";
+            " Where " + PassagiTable.TABLE_NAME + "." + PassagiTable.CL_ID_UTENTE + " = " + idUtente + " ORDER BY "+
+            PassagiTable.TABLE_NAME + "." + PassagiTable.CL_DATA + " DESC";
 
         try(Cursor c = getReadableDatabase().rawQuery(sql, null)) {
             while(c.moveToNext()){
@@ -156,37 +156,9 @@ public class DBHandler extends SQLiteOpenHelper {
         return passaggios;
     }
 
-    public void getItemPassaggiWhitLoaded(int idUtente,ArrayList<ItemPassaggi> alreadyLoaded){
-        ArrayList<Integer> mapInt = (ArrayList<Integer>) alreadyLoaded.stream().mapToInt(ItemPassaggi::getIdPassaggio).boxed().collect(Collectors.toList());
-
-        String sql = "SELECT " +
-            PassagiTable.TABLE_NAME + "." + PassagiTable._ID +"," +
-            PassagiTable.TABLE_NAME + "." + PassagiTable.CL_ID_UTENTE +"," +
-            PassagiTable.TABLE_NAME + "." + PassagiTable.CL_ID_VARCO +"," +
-            PassagiTable.TABLE_NAME + "." + PassagiTable.CL_DATA  +"," +
-            VarchiTable.TABLE_NAME + "." + VarchiTable.CL_DESCRIZIONE  +"," +
-            VarchiTable.TABLE_NAME + "." + VarchiTable.CL_LATITUDINE  +"," +
-            VarchiTable.TABLE_NAME + "." + VarchiTable.CL_LONGITUDINE  +"," +
-            VarchiTable.TABLE_NAME + "." + VarchiTable.CL_IMAGE  +
-            " FROM " + PassagiTable.TABLE_NAME +" LEFT JOIN " + VarchiTable.TABLE_NAME + " ON " +
-            PassagiTable.TABLE_NAME + "." + PassagiTable.CL_ID_VARCO +" = " + VarchiTable.TABLE_NAME + "." + VarchiTable._ID +
-
-            " where " + PassagiTable.TABLE_NAME + "." + PassagiTable.CL_ID_UTENTE + " = " + idUtente + " AND " +
-            PassagiTable.TABLE_NAME +"."+PassagiTable._ID + " NOT IN ("+mapInt.toString().substring(1,mapInt.toString().length()-1)+")";
-
-        try(Cursor c = getReadableDatabase().rawQuery(sql, null)) {
-            while(c.moveToNext()){
-                alreadyLoaded.add(new ItemPassaggi(c.getInt(0),c.getInt(1),c.getString(3),new Varco(c.getInt(2),c.getDouble(5),c.getDouble(6), c.getString(4),c.getString(7))));
-            }
-        }catch (Exception ex){
-            ex.printStackTrace();
-        }
-    }
-
-
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if(oldVersion < newVersion){
+        if(oldVersion < newVersion) {
 
         }
     }

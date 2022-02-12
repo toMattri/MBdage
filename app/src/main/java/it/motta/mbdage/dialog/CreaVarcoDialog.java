@@ -74,6 +74,8 @@ public class CreaVarcoDialog extends Dialog implements View.OnClickListener{
     btDelete.setOnClickListener(this);
     btDelete.setVisibility(View.GONE);
     photo.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_photo,null));
+    photo.setScaleType(ImageView.ScaleType.FIT_CENTER);
+    photo.setPadding(4,4,4,4);
     edtDescVarco.setOnKeyListener((v, keyCode, event) -> {
       ((TextInputLayout)findViewById(v.getId()).getParent().getParent()).setEndIconVisible(true);
       return false;

@@ -11,6 +11,7 @@
     <color name="secondaryTextColor">#ffffff</color>
 
     <color name="Gray">#7A7676</color>
+    <color name="DarkGray">#635D5D</color>
     <color name="red">#F10B0B</color>
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>

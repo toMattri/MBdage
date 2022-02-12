@@ -7,7 +7,7 @@
         android:right="4dp"
         android:top="4dp">
 
-        <selector  xmlns:android="http://schemas.android.com/apk/res/android">
+        <selector>
 
             <item android:drawable="@drawable/first_button" android:state_enabled="true" android:state_pressed="false"/>
             <item android:drawable="@drawable/first_button_sel" android:state_enabled="true" android:state_pressed="true"/>

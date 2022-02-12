@@ -4,10 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.android.volley.Response;
-
 import org.json.JSONObject;
 
+import it.motta.mbdage.R;
 import it.motta.mbdage.dialog.ProgressCDialog;
 import it.motta.mbdage.interfaces.IAccessOperation;
 import it.motta.mbdage.models.Utente;
@@ -35,8 +34,8 @@ public class LoginWorker extends AsyncTask<Void,Void,String> {
     protected void onPreExecute() {
         super.onPreExecute();
         progressCDialog = new ProgressCDialog(mContext);
-        progressCDialog.setTitle("Caricamento in corso");
-        progressCDialog.setMessage("Login in corso...");
+        progressCDialog.setTitle(mContext.getResources().getString(R.string.loading));
+        progressCDialog.setMessage(mContext.getResources().getString(R.string.loging_loading));
         progressCDialog.show();
     }
 

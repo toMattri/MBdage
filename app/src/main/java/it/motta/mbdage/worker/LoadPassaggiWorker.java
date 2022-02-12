@@ -8,8 +8,8 @@ import org.json.JSONObject;
 
 import it.motta.mbdage.database.DBHandler;
 import it.motta.mbdage.interfaces.ILoadPassaggi;
-import it.motta.mbdage.response.ResponsePassaggi;
 import it.motta.mbdage.models.filter.FilterPassaggi;
+import it.motta.mbdage.response.ResponsePassaggi;
 import it.motta.mbdage.utils.MakeHttpRequest;
 import it.motta.mbdage.utils.TraduceComunication;
 import it.motta.mbdage.utils.Utils;
@@ -21,10 +21,12 @@ public class LoadPassaggiWorker extends AsyncTask<Void,Void,String> {
     private final FilterPassaggi filterPassaggi;
     private final DBHandler dbHandler;
     private final ILoadPassaggi iLoadPassaggi;
+    private final boolean reload;
 
-    public LoadPassaggiWorker(Context mContext, FilterPassaggi filterPassaggi, ILoadPassaggi iLoadPassaggi) {
+    public LoadPassaggiWorker(Context mContext, FilterPassaggi filterPassaggi, ILoadPassaggi iLoadPassaggi,boolean reload) {
         super();
         this.mContext = mContext;
+        this.reload = reload;
         this.iLoadPassaggi = iLoadPassaggi;
         this.filterPassaggi = filterPassaggi;
         this.dbHandler = DBHandler.getIstance(mContext);
@@ -47,7 +49,7 @@ public class LoadPassaggiWorker extends AsyncTask<Void,Void,String> {
                                 iLoadPassaggi.OnCompleteWithout();
                             break;
                         case SUCCESS:
-                            dbHandler.writePassaggi(TraduceComunication.getPassaggi(jsonObject.getJSONArray("Passaggi")));
+                            dbHandler.writePassaggi(TraduceComunication.getPassaggi(jsonObject.getJSONArray("Passaggi")),reload);
                             iLoadPassaggi.OnComplete();
                             break;
                     }

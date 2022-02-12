@@ -6,5 +6,4 @@ public interface ILoadPassaggi {
   void OnError();
   void OnCompleteWithout();
 
-
 }

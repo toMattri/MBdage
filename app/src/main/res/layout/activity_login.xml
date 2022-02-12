@@ -276,7 +276,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Oppure continua con..."
+                android:text="@string/oppure"
                 android:textColor="@color/colorSecondaryDark"
                 android:textStyle="bold" />
 
@@ -285,17 +285,26 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <com.google.android.gms.common.SignInButton
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/signInGoogle"
-
+                    android:background="@drawable/selector_login_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:drawableRight="@drawable/ic_google"
+                    android:textColor="@color/DarkGray"
+                    android:text="@string/continuacon"
                     android:layout_margin="5dp" />
 
-                <com.google.android.gms.common.SignInButton
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/signInGit"
                     android:layout_width="wrap_content"
+                    android:drawableRight="@drawable/ic_github"
+                    android:background="@drawable/selector_login_button"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/DarkGray"
+
+                    android:text="@string/continuacon"
+
                     android:layout_margin="5dp" />
             </LinearLayout>
 

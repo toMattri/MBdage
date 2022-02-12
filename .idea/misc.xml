@@ -13,40 +13,51 @@
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/background_dialog_success.xml" value="0.2125" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/background_dialog_warnig.xml" value="0.2125" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/background_shader.xml" value="0.265625" />
+        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/background_with_logo.xml" value="0.3675" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/bg_nfc.xml" value="0.218" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/first_button.xml" value="0.265625" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/first_button_disable.xml" value="0.265625" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/first_button_sel.xml" value="0.265625" />
+        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/ic_github.xml" value="0.169" />
+        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/ic_google.xml" value="0.169" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/ic_launcher_background.xml" value="0.12777777777777777" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/ic_maps.xml" value="0.3675" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/ic_nfc.xml" value="0.218" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/ic_nfc_sel.xml" value="0.218" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/ic_qrcode.xml" value="0.218" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/ic_qrcode_sel.xml" value="0.274" />
+        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/login_button.xml" value="0.242" />
+        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/login_button_sel.xml" value="0.288" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/logo.xml" value="0.265625" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/logocompleto.xml" value="0.265625" />
+        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/long_button.xml" value="0.3675" />
+        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/longin_button_sel.xml" value="0.288" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/second_button.xml" value="0.3675" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/second_button_disable.xml" value="0.3675" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/second_button_sel.xml" value="0.3675" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/selector_first_button.xml" value="0.265625" />
+        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/selector_login_button.xml" value="0.288" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/selector_nfc.xml" value="0.218" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/selector_qrcode.xml" value="0.3675" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/selector_second_button.xml" value="0.3675" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout-land/activity_login.xml" value="0.31040564373897706" />
-        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/activity_login.xml" value="0.33" />
-        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/activity_main.xml" value="0.46243739565943237" />
+        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/activity_login.xml" value="0.5" />
+        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/activity_maps.xml" value="0.1828125" />
-        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/activity_splash.xml" value="0.36666666666666664" />
+        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/activity_splash.xml" value="0.33" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/carta_layout.xml" value="0.36666666666666664" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/contet_profile.xml" value="0.3387345679012346" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/crea_varco_dialog.xml" value="0.33" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/dialog_c_progress.xml" value="0.33" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/dialog_confirm.xml" value="0.36666666666666664" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/dialog_custom.xml" value="0.36666666666666664" />
+        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/dialog_filter_passaggi.xml" value="0.5" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/dialog_time_picker.xml" value="0.36666666666666664" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/item_accessi.xml" value="0.36666666666666664" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/item_passaggi.xml" value="0.5" />
+        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/open_varco_dialog.xml" value="0.23421052631578948" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/settings_activity.xml" value="0.33" />
+        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/settings_dialog.xml" value="0.5" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/varco_frame_dialog.xml" value="0.25" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.2578125" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.2578125" />

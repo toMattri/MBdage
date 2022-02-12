@@ -10,7 +10,7 @@ public class Varco {
     private String descrizione,img;
 
     public Varco(JSONObject jsonObject) throws JSONException {
-       this(jsonObject.getLong("idVarco"),jsonObject.getDouble("lat"),jsonObject.getDouble("long"),"","");
+        this(jsonObject.getLong("idVarco"),jsonObject.getDouble("lat"),jsonObject.getDouble("long"),"","");
     }
 
 

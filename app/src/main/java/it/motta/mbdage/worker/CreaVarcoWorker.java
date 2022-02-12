@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 
+import it.motta.mbdage.R;
 import it.motta.mbdage.dialog.ProgressCDialog;
 import it.motta.mbdage.interfaces.ICreateVarco;
 import it.motta.mbdage.models.Varco;
@@ -43,8 +44,8 @@ public class CreaVarcoWorker extends AsyncTask<Void,Void,String> {
     protected void onPreExecute() {
         super.onPreExecute();
         progressCDialog = new ProgressCDialog(mContext);
-        progressCDialog.setTitle("Caricamento in corso");
-        progressCDialog.setMessage("Registrazione in corso...");
+        progressCDialog.setTitle(mContext.getString(R.string.loading));
+        progressCDialog.setMessage(mContext.getString(R.string.creazionevarco_loading));
         progressCDialog.show();
     }
 
