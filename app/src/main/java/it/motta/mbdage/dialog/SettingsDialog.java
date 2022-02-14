@@ -47,7 +47,7 @@ import it.motta.mbdage.models.Utente;
 import it.motta.mbdage.models.evalue.TypeDialog;
 import it.motta.mbdage.models.evalue.TypeLogin;
 import it.motta.mbdage.models.evalue.TypeUtente;
-import it.motta.mbdage.response.ResponseAccess;
+import it.motta.mbdage.models.response.ResponseAccess;
 import it.motta.mbdage.utils.Parameters;
 import it.motta.mbdage.utils.Utils;
 import it.motta.mbdage.worker.RegisterWorker;
@@ -74,7 +74,6 @@ public class SettingsDialog extends DialogFragment implements View.OnClickListen
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setStyle(DialogFragment.STYLE_NO_TITLE, R.style.Theme_MBdage);
 
   }
 
@@ -205,11 +204,11 @@ public class SettingsDialog extends DialogFragment implements View.OnClickListen
 
     if(window != null) {
       ColorDrawable back = new ColorDrawable(Color.TRANSPARENT);
-      InsetDrawable inset = new InsetDrawable(back, 0, 0, 0, 0);
+      InsetDrawable inset = new InsetDrawable(back, 48, 24, 48, 36);
       window.setBackgroundDrawable(inset);
       window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
       window.setGravity(Gravity.CENTER);
-      window.setWindowAnimations(R.style.Animation_showDialog_Varco);
+      window.setWindowAnimations(R.style.Animation_showDialogSetting);
     }
 
   }

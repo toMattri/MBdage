@@ -50,7 +50,7 @@ import it.motta.mbdage.models.Utente;
 import it.motta.mbdage.models.evalue.TypeDialog;
 import it.motta.mbdage.models.evalue.TypeLogin;
 import it.motta.mbdage.models.evalue.TypeUtente;
-import it.motta.mbdage.response.ResponseAccess;
+import it.motta.mbdage.models.response.ResponseAccess;
 import it.motta.mbdage.utils.TraduceComunication;
 import it.motta.mbdage.utils.Utils;
 import it.motta.mbdage.worker.LoadVarchiWoker;
@@ -375,12 +375,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         @Override
         public void OnErroreLoadImage() {
-
+            /*Not used*/
         }
 
     };
 
-    private void reloadToken(int idUtente){
+    private void reloadToken(int idUtente) {
         mMessaging.getToken().addOnCompleteListener(task -> {
             if (!task.isSuccessful())
                 return;

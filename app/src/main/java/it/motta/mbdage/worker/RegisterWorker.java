@@ -18,7 +18,7 @@ import it.motta.mbdage.R;
 import it.motta.mbdage.dialog.ProgressCDialog;
 import it.motta.mbdage.interfaces.IAccessOperation;
 import it.motta.mbdage.models.Utente;
-import it.motta.mbdage.response.ResponseAccess;
+import it.motta.mbdage.models.response.ResponseAccess;
 import it.motta.mbdage.utils.MakeHttpRequest;
 import it.motta.mbdage.utils.Parameters;
 import it.motta.mbdage.utils.TraduceComunication;

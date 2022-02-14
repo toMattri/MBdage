@@ -17,7 +17,7 @@ import it.motta.mbdage.R;
 import it.motta.mbdage.dialog.ProgressCDialog;
 import it.motta.mbdage.interfaces.ICreateVarco;
 import it.motta.mbdage.models.Varco;
-import it.motta.mbdage.response.ResponseCreaVarco;
+import it.motta.mbdage.models.response.ResponseCreaVarco;
 import it.motta.mbdage.utils.MakeHttpRequest;
 import it.motta.mbdage.utils.Parameters;
 import it.motta.mbdage.utils.TraduceComunication;

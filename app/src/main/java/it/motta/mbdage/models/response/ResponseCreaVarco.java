@@ -1,4 +1,4 @@
-package it.motta.mbdage.response;
+package it.motta.mbdage.models.response;
 
 public enum ResponseCreaVarco {
 

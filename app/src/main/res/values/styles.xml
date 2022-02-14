@@ -30,11 +30,15 @@
     <style name="Animation"/>
 
     <style name="Animation.showDialog">
-        <item name="android:windowEnterAnimation">@anim/pushdown</item>
-        <item name="android:windowExitAnimation">@anim/fromdown</item>
+        <item name="android:windowEnterAnimation">@anim/fromdown</item>
+        <item name="android:windowExitAnimation">@anim/pushdown</item>
+    </style>
+    <style name="Animation.showDialogSetting">
+        <item name="android:windowEnterAnimation">@anim/fromup</item>
+        <item name="android:windowExitAnimation">@anim/pushdown</item>
     </style>
 
-    <style name="Animation.showDialog.Varco">
+    <style name="Animation.Varco">
         <item name="android:windowEnterAnimation">@anim/grow_from_topright_to_bottomleft</item>
         <item name="android:windowExitAnimation">@anim/pushdown</item>
     </style>

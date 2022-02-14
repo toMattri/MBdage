@@ -1,14 +1,9 @@
 package it.motta.mbdage.dialog;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.InsetDrawable;
-import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -29,14 +24,14 @@ import androidx.fragment.app.FragmentManager;
 
 import com.google.zxing.WriterException;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.Objects;
 
 import it.motta.mbdage.R;
 import it.motta.mbdage.controller.QrCodeController;
 import it.motta.mbdage.models.Varco;
+import it.motta.mbdage.models.evalue.TypeDialog;
+import it.motta.mbdage.utils.Utils;
 
 public class VarcoFrameDialog extends DialogFragment implements View.OnClickListener{
 
@@ -53,47 +48,24 @@ public class VarcoFrameDialog extends DialogFragment implements View.OnClickList
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setStyle(DialogFragment.STYLE_NO_TITLE, R.style.Theme_MBdage);
-
   }
 
   @Override
   public void onClick(View view) {
     switch (view.getId()){
       case R.id.btEsporta:
-
         try {
-          Bitmap scBitmap;
-          llExport.setDrawingCacheEnabled(true);
-          scBitmap = Bitmap.createBitmap(llExport.getDrawingCache());
-          llExport.setDrawingCacheEnabled(false);
-          ByteArrayOutputStream stream = new ByteArrayOutputStream();
-          scBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-          byte[] byteArray = stream.toByteArray();
-          Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-          PdfDocument pdfDocument = new PdfDocument();
-          Paint paint = new Paint();
-
-          PdfDocument.PageInfo mypageInfo = new PdfDocument.PageInfo.Builder(llExport.getWidth(), llExport.getHeight(), 1).create();
-          PdfDocument.Page myPage = pdfDocument.startPage(mypageInfo);
-          Canvas canvas = myPage.getCanvas();
-          canvas.drawBitmap(bitmap, 0, 0, paint);
-
-          File varcoFile = File.createTempFile(varco.getDescrizione(), ".pdf", getContext().getFilesDir());
-
-          pdfDocument.finishPage(myPage);
-          pdfDocument.writeTo(new FileOutputStream(varcoFile));
+          File varcoFile = Utils.createPdf(getContext(),varco,llExport);
           Intent sendIntent = new Intent();
           sendIntent.setAction(Intent.ACTION_SEND);
           sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
           sendIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-
           sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(getContext(), "it.motta.mbdage.fileprovider", varcoFile));
           sendIntent.setType("application/pdf");
-
           startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.send_varcoimg)));
         }catch (Exception ex){
           ex.printStackTrace();
+          new CustomDialog(getContext(),getResources().getString(R.string.errore),getResources().getString(R.string.err_create_file), TypeDialog.ERROR).show();
         }
     }
     dismiss();
@@ -133,7 +105,7 @@ public class VarcoFrameDialog extends DialogFragment implements View.OnClickList
       window.setBackgroundDrawable(inset);
       window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
       window.setGravity(Gravity.CENTER);
-      window.setWindowAnimations(R.style.Animation_showDialog_Varco);
+      window.setWindowAnimations(R.style.Animation_Varco);
     }
 
   }

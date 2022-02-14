@@ -2,10 +2,10 @@ package it.motta.mbdage.models;
 
 public class ItemPassaggi {
 
-    private int idPassaggio;
-    private long idUtente;
-    private String data;
-    private Varco varco;
+    private final int idPassaggio;
+    private final long idUtente;
+    private final String data;
+    private final Varco varco;
 
     public ItemPassaggi(int idPassaggio,long idUtente, String data, Varco varco) {
         this.idUtente = idUtente;

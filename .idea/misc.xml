@@ -41,7 +41,7 @@
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/selector_qrcode.xml" value="0.3675" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/drawable/selector_second_button.xml" value="0.3675" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout-land/activity_login.xml" value="0.31040564373897706" />
-        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/activity_login.xml" value="0.5" />
+        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/activity_login.xml" value="0.33" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/activity_maps.xml" value="0.1828125" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/activity_splash.xml" value="0.33" />
@@ -57,7 +57,7 @@
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/item_passaggi.xml" value="0.5" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/open_varco_dialog.xml" value="0.23421052631578948" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/settings_activity.xml" value="0.33" />
-        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/settings_dialog.xml" value="0.5" />
+        <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/settings_dialog.xml" value="0.33" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/layout/varco_frame_dialog.xml" value="0.25" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.2578125" />
         <entry key="..\:/AndroidProjects/MBdage/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.2578125" />

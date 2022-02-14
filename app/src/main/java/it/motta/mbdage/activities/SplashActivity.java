@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Window;
 import android.widget.Toast;
 
@@ -27,7 +26,7 @@ import it.motta.mbdage.interfaces.IAccessOperation;
 import it.motta.mbdage.models.Utente;
 import it.motta.mbdage.models.evalue.TypeLogin;
 import it.motta.mbdage.models.evalue.TypeUtente;
-import it.motta.mbdage.response.ResponseAccess;
+import it.motta.mbdage.models.response.ResponseAccess;
 import it.motta.mbdage.utils.TraduceComunication;
 import it.motta.mbdage.worker.LoadVarchiWoker;
 import it.motta.mbdage.worker.LoginWorker;
@@ -80,7 +79,6 @@ public class SplashActivity extends Activity {
     public void onRequestPermissionsResult(int requestCode,String permissions[], int[] grantResults) {
         switch (requestCode) {
             case 1: {
-                // If request is cancelled, the result arrays are empty.
                 if ((ContextCompat.checkSelfPermission(this,
                     android.Manifest.permission.READ_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) ||
@@ -154,7 +152,6 @@ public class SplashActivity extends Activity {
         public void OnCompleteOperation(JSONObject response) {
             try {
                 int result = response.getInt("result");
-
                 switch (ResponseAccess.fromValue(result)){
                     case SUCCESS:
                         Utente utente = TraduceComunication.getUtente(response.getJSONObject("Utente"));
@@ -193,7 +190,6 @@ public class SplashActivity extends Activity {
     private void reloadToken(int idUtente){
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
-                Log.e("TAG", "Fetching FCM registration token failed", task.getException());
                 return;
             }
 
@@ -201,7 +197,6 @@ public class SplashActivity extends Activity {
             new UpdateTokenWorker(this,idUtente,token).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         });
     }
-
 
 
 }

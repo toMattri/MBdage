@@ -82,7 +82,6 @@ public class CreaVarcoDialog extends Dialog implements View.OnClickListener{
     });
   }
 
-
   public  void onTakePhoto(int requestCode, int resultCode, Intent data) {
     if (requestCode == REQUEST_IMAGE_CAPTURE) {
       Bundle extras = data.getExtras();

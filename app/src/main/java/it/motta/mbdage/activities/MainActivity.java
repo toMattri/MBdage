@@ -1,11 +1,9 @@
 package it.motta.mbdage.activities;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -20,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -93,11 +90,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ImageButton btFiltro = findViewById(R.id.btFiltro);
         btFiltro.setOnClickListener(this);
         swipeRefreshLayout.setRefreshing(true);
-
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(MainActivity.this, DividerItemDecoration.VERTICAL);
         list.addItemDecoration(dividerItemDecoration);
         this.onRefresh();
-
         checkForLocation();
     }
 
@@ -169,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 options.setCameraId(0);
                 options.setPrompt("Scan qr");
                 options.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
-                barcodeLauncher.launch(options);
+                qrcodeLauncher.launch(options);
                 break;
             case R.id.btImpostazioni:
                 PopupMenu menu = new PopupMenu(this, view);
@@ -242,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    private final ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(),result -> {
+    private final ActivityResultLauncher<ScanOptions> qrcodeLauncher = registerForActivityResult(new ScanContract(), result -> {
         if (result.getContents() == null) {
             Intent originalIntent = result.getOriginalIntent();
             if (originalIntent == null) {
@@ -314,11 +309,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             new CustomDialog(MainActivity.this,getResources().getString(R.string.errore),getResources().getString(R.string.err_token)).show();
         }
     };
-
-
-
-
-
-
 
 }

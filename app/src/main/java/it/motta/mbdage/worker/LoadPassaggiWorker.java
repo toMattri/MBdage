@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import it.motta.mbdage.database.DBHandler;
 import it.motta.mbdage.interfaces.ILoadPassaggi;
 import it.motta.mbdage.models.filter.FilterPassaggi;
-import it.motta.mbdage.response.ResponsePassaggi;
+import it.motta.mbdage.models.response.ResponsePassaggi;
 import it.motta.mbdage.utils.MakeHttpRequest;
 import it.motta.mbdage.utils.TraduceComunication;
 import it.motta.mbdage.utils.Utils;

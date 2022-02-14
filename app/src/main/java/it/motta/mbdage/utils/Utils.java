@@ -4,6 +4,12 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.pdf.PdfDocument;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -11,6 +17,9 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.security.MessageDigest;
@@ -23,6 +32,7 @@ import it.motta.mbdage.BuildConfig;
 import it.motta.mbdage.activities.SplashActivity;
 import it.motta.mbdage.database.DBHandler;
 import it.motta.mbdage.dialog.ConfirmDialog;
+import it.motta.mbdage.models.Varco;
 
 public class Utils {
 
@@ -126,6 +136,31 @@ public class Utils {
             return str.substring(0,max);
         else return str;
 
+    }
+
+
+    public static File createPdf(Context context, Varco varco, View v) throws Exception{
+        Bitmap scBitmap;
+        v.setDrawingCacheEnabled(true);
+        scBitmap = Bitmap.createBitmap(v.getDrawingCache());
+        v.setDrawingCacheEnabled(false);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        scBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+        Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+        PdfDocument pdfDocument = new PdfDocument();
+        Paint paint = new Paint();
+
+        PdfDocument.PageInfo mypageInfo = new PdfDocument.PageInfo.Builder(v.getWidth(), v.getHeight(), 1).create();
+        PdfDocument.Page myPage = pdfDocument.startPage(mypageInfo);
+        Canvas canvas = myPage.getCanvas();
+        canvas.drawBitmap(bitmap, 0, 0, paint);
+
+        File varcoFile = File.createTempFile(varco.getDescrizione(), ".pdf", context.getFilesDir());
+
+        pdfDocument.finishPage(myPage);
+        pdfDocument.writeTo(new FileOutputStream(varcoFile));
+        return varcoFile;
     }
 
 }

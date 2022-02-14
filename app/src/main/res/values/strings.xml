@@ -54,6 +54,7 @@
     <string name="err_load_img_varco">Si è verificato un errore durante il caricamento della foto dell\'arco</string>
     <string name="err_load_imgutente">Si è verificato un errore durante il caricamento della foto dell\'utente</string>
     <string name="err_already_varco">Un varco è già presente con le stesse posioni!</string>
+    <string name="err_create_file">Si è verificato un errore durante la creazione del file da condividere!</string>
 
     <string name="registraticon">Registrati ora…</string>
     <string name="oppurecon">Oppure continua con…</string>

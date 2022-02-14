@@ -50,7 +50,7 @@ public class DialogOpenVarco extends DialogFragment {
       window.setBackgroundDrawable(inset);
       window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
       window.setGravity(Gravity.TOP);
-      window.setWindowAnimations(R.style.Animation_showDialog_Varco);
+      window.setWindowAnimations(R.style.Animation_Varco);
     }
 
   }
